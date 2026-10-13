@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1080">
+<title>仙女村 · 欢迎您来</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%23e9ddcc'/%3E%3Ctext x='32' y='42' font-size='26' text-anchor='middle' fill='%23a5432f' font-family='serif'%3E仙%3C/text%3E%3C/svg%3E">
+<style>
+  :root {
+    --paper: #e9ddcc;
+    --paper-light: #f3ead9;
+    --ink: #43382c;
+    --ink-dim: #7a6a58;
+    --ink-faint: #a5977f;
+    --accent: #a5432f;
+    --line: rgba(90, 70, 50, .25);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: "KaiTi", "STKaiti", "SimSun", "Songti SC", serif;
+    color: var(--ink);
+    background-color: var(--paper);
+    background-image: url("images/paper.jpg");
+    background-size: 380px;
+    min-width: 1080px;
+    min-height: 100vh;
+    overflow-x: auto;
+  }
+
+  .page {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 0 32px 60px;
+  }
+
+  /* ===== 标题区 ===== */
+  .masthead {
+    text-align: center;
+    padding: 40px 0 30px;
+  }
+
+  .site-logo {
+    width: 116px;
+    height: 116px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+    margin: 0 auto 22px;
+    border: 1px solid var(--line);
+    box-shadow: 0 4px 16px rgba(70, 50, 30, .2);
+  }
+
+  .site-title {
+    font-size: 84px;
+    letter-spacing: 36px;
+    text-indent: 36px; /* 平衡最后一字字距 */
+    color: var(--ink);
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .site-welcome {
+    margin-top: 20px;
+    font-size: 22px;
+    letter-spacing: 22px;
+    text-indent: 22px;
+    color: var(--ink-dim);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+  }
+
+  .site-welcome::before, .site-welcome::after {
+    content: "";
+    width: 120px;
+    height: 1px;
+    background: var(--line);
+  }
+
+  /* ===== 村貌照片 ===== */
+  .hero {
+    border: 1px solid var(--line);
+    padding: 8px;
+    background: var(--paper-light);
+    box-shadow: 0 4px 18px rgba(70, 50, 30, .18);
+  }
+
+  .hero img {
+    width: 100%;
+    height: 430px;
+    object-fit: cover;
+    display: block;
+  }
+
+  .hero-caption {
+    text-align: center;
+    font-size: 14px;
+    color: var(--ink-faint);
+    letter-spacing: 4px;
+    padding-top: 8px;
+  }
+
+  /* ===== 板块导航 ===== */
+  .tab-bar {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 34px 0 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .tab {
+    padding: 13px 38px;
+    font-size: 19px;
+    letter-spacing: 5px;
+    text-indent: 5px;
+    color: var(--ink-dim);
+    cursor: pointer;
+    user-select: none;
+    border: 1px solid transparent;
+    border-bottom: none;
+    transition: color .2s, background .2s;
+  }
+
+  .tab:hover { color: var(--ink); }
+
+  .tab.active {
+    color: var(--accent);
+    background: var(--paper-light);
+    border-color: var(--line);
+    border-radius: 6px 6px 0 0;
+    position: relative;
+    font-weight: 700;
+  }
+
+  .tab.active::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: -1px;
+    height: 1px;
+    background: var(--paper-light);
+  }
+
+  .tab-panel {
+    display: none;
+    border: 1px solid var(--line);
+    border-top: none;
+    background: var(--paper-light);
+    box-shadow: 0 4px 18px rgba(70, 50, 30, .12);
+    padding: 44px 56px 52px;
+    min-height: 380px;
+  }
+
+  .tab-panel.active { display: block; }
+
+  /* ===== 仙女的故事 ===== */
+  .story-title {
+    text-align: center;
+    font-size: 30px;
+    letter-spacing: 8px;
+    text-indent: 8px;
+    color: var(--accent);
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .story-divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    color: var(--ink-faint);
+    font-size: 13px;
+    letter-spacing: 2px;
+    margin-bottom: 34px;
+  }
+
+  .story-divider::before, .story-divider::after {
+    content: "";
+    width: 150px;
+    height: 1px;
+    background: var(--line);
+  }
+
+  /* 故事插图 */
+  .story-figure {
+    width: 460px;
+    margin: 0 auto 34px;
+    border: 1px solid var(--line);
+    padding: 10px;
+    background: var(--paper);
+    box-shadow: 0 6px 22px rgba(70, 50, 30, .2);
+  }
+
+  .story-figure img {
+    width: 100%;
+    display: block;
+  }
+
+  .story-figure figcaption {
+    text-align: center;
+    font-size: 14px;
+    color: var(--ink-faint);
+    letter-spacing: 6px;
+    text-indent: 6px;
+    padding-top: 10px;
+  }
+
+  .story-body p {
+    font-size: 17.5px;
+    line-height: 2.15;
+    letter-spacing: 1.5px;
+    text-indent: 2em;
+    margin-bottom: 18px;
+    color: var(--ink);
+  }
+
+  .story-body p:last-child { margin-bottom: 0; }
+
+  /* ===== 仙女表演：左文右图 ===== */
+  .show-layout {
+    display: flex;
+    gap: 40px;
+    align-items: flex-start;
+  }
+
+  .show-text {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .show-text p {
+    font-size: 17.5px;
+    line-height: 2.15;
+    letter-spacing: 1.5px;
+    text-indent: 2em;
+    margin-bottom: 18px;
+    color: var(--ink);
+  }
+
+  .show-text p:last-child { margin-bottom: 0; }
+
+  .show-figure {
+    width: 375px;
+    flex-shrink: 0;
+    border: 1px solid var(--line);
+    padding: 10px;
+    background: var(--paper);
+    box-shadow: 0 6px 22px rgba(70, 50, 30, .2);
+  }
+
+  .show-figure img {
+    width: 100%;
+    display: block;
+  }
+
+  .show-figure figcaption {
+    text-align: center;
+    font-size: 14px;
+    color: var(--ink-faint);
+    letter-spacing: 6px;
+    text-indent: 6px;
+    padding-top: 10px;
+  }
+
+  /* ===== 门票购买窗口 ===== */
+  .ticket-box {
+    margin-top: 30px;
+    padding: 24px 30px;
+    border: 1px solid var(--line);
+    background: var(--paper);
+    box-shadow: 0 4px 16px rgba(70, 50, 30, .15);
+    text-align: center;
+  }
+
+  .ticket-box h3 {
+    font-size: 20px;
+    letter-spacing: 3px;
+    color: var(--ink);
+    margin-bottom: 16px;
+  }
+
+  .ticket-price {
+    font-size: 16px;
+    color: var(--ink-light);
+    margin-bottom: 14px;
+  }
+
+  .ticket-price .price {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+
+  .btn-buy {
+    display: block;
+    margin: 0 auto;
+    padding: 8px 28px;
+    font-size: 15px;
+    letter-spacing: 2px;
+    background: var(--ink);
+    color: var(--paper);
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    text-align: center;
+    transition: opacity .2s;
+  }
+
+  .btn-buy:hover { opacity: .85; }
+
+  /* 凭证码输入弹窗 */
+  .code-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.5);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .code-overlay.show { display: flex; }
+
+  .code-box {
+    background: var(--paper);
+    padding: 28px 36px;
+    border: 1px solid var(--line);
+    box-shadow: 0 8px 32px rgba(0,0,0,.3);
+    text-align: center;
+  }
+
+  .code-box p {
+    font-size: 15px;
+    color: var(--ink);
+    margin-bottom: 16px;
+    letter-spacing: 1px;
+  }
+
+  .code-input {
+    width: 200px;
+    height: 36px;
+    border: 1px solid var(--line);
+    background: #FFF;
+    color: var(--ink);
+    font-size: 16px;
+    text-align: center;
+    letter-spacing: 2px;
+    outline: none;
+  }
+
+  .code-input:focus { border-color: var(--ink); }
+
+  .code-error {
+    display: none;
+    margin-top: 10px;
+    font-size: 13px;
+    color: #c0392b;
+    letter-spacing: 1px;
+  }
+
+  .code-error.show { display: block; }
+
+  .code-btn {
+    display: block;
+    margin: 14px auto 0;
+    padding: 6px 24px;
+    font-size: 14px;
+    background: var(--ink);
+    color: var(--paper);
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    text-align: center;
+  }
+
+  /* 门票推出动画 */
+  .stage-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    overflow: hidden;
+  }
+
+  .stage-overlay.show { display: block; }
+
+  .stage-blur {
+    position: absolute;
+    inset: 0;
+    backdrop-filter: blur(12px);
+    background: rgba(0,0,0,.3);
+    opacity: 0;
+    transition: opacity .6s;
+  }
+
+  .stage-blur.on { opacity: 1; }
+
+  .hand-img {
+    position: absolute;
+    top: -729px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 201;
+    transition: top 2s cubic-bezier(.3,.6,.5,1);
+    width: 550px;
+  }
+
+  .hand-img.push { top: calc(50vh - 729px); }
+  .hand-img.withdraw { top: -729px; }
+
+  .ticket-img {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 202;
+    max-width: 100vw;
+    max-height: 120vh;
+    opacity: 0;
+    transition: top 2s cubic-bezier(.3,.6,.5,1), opacity .8s ease-out .5s;
+    cursor: pointer;
+  }
+
+  .ticket-img.push {
+    top: 50%;
+    opacity: 1;
+  }
+
+  /* 图片4/5 从顶部滑入动画 */
+  .drop-img {
+    position: absolute;
+    top: -100vh;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 203;
+    max-width: 70vw;
+    max-height: 85vh;
+    opacity: 0;
+  }
+
+  .drop-img.slide-in {
+    animation: slideFromTop 1.2s ease-out forwards;
+  }
+
+  @keyframes slideFromTop {
+    0% { top: -100vh; opacity: 0; }
+    15% { opacity: 1; }
+    100% { top: 50%; transform: translate(-50%, -50%); opacity: 1; }
+  }
+
+  .drop-img.fadeout {
+    animation: fadeOut .8s ease-out forwards;
+  }
+
+  @keyframes fadeOut {
+    0% { opacity: 1; top: 50%; transform: translate(-50%, -50%); }
+    100% { opacity: 0; top: 50%; transform: translate(-50%, -50%); }
+  }
+
+  .stage-black {
+    position: absolute;
+    inset: 0;
+    background: #000;
+    z-index: 199;
+    opacity: 0;
+    transition: opacity 1.5s;
+  }
+
+  .stage-black.on { opacity: 1; }
+
+  footer {
+    text-align: center;
+    padding: 40px 0 0;
+    font-size: 13px;
+    color: var(--ink-faint);
+    letter-spacing: 3px;
+  }
+
+  /* ===== 管理员入口（左上角） ===== */
+  .admin-entry-wrap {
+    position: fixed;
+    top: 12px;
+    left: 20px;
+    z-index: 200;
+  }
+  .admin-entry {
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    opacity: .5;
+    transition: opacity .2s;
+    display: block;
+  }
+  .admin-entry:hover { opacity: 1; }
+  .admin-entry.logged-in { opacity: 1; filter: drop-shadow(0 0 4px rgba(165,67,47,.6)); }
+  .admin-badge {
+    display: none;
+    position: absolute;
+    bottom: -4px;
+    right: -4px;
+    width: 14px;
+    height: 14px;
+    background: #A5432F;
+    border-radius: 50%;
+    border: 2px solid #F5EDE0;
+    font-size: 9px;
+    color: #FFF;
+    text-align: center;
+    line-height: 10px;
+    font-weight: bold;
+    pointer-events: none;
+  }
+  .admin-entry-wrap.logged-in .admin-badge { display: block; }
+
+  /* 管理员已登录 · 简洁信息盒 */
+  .admin-info-box { text-align: center; }
+  .admin-info-box .admin-status {
+    font-size: 15px;
+    color: var(--ink, #3E2723);
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+  }
+  .admin-info-box .admin-sub {
+    font-size: 12px;
+    color: var(--ink-faint, #8D6E63);
+    margin-bottom: 18px;
+  }
+  .admin-info-box .admin-btn { background: #c0392b; }
+
+  /* 管理员操作 toast 提示 */
+  .admin-toast {
+    position: fixed;
+    top: 60px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-20px);
+    background: rgba(62,39,35,.92);
+    color: #FFF7E0;
+    padding: 10px 24px;
+    font-size: 14px;
+    letter-spacing: 2px;
+    border-radius: 4px;
+    z-index: 9999;
+    opacity: 0;
+    pointer-events: none;
+    white-space: pre-line;
+    line-height: 1.8;
+    text-align: center;
+    max-width: 80vw;
+    transition: opacity .25s, transform .25s;
+  }
+  .admin-toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  .admin-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.4);
+    z-index: 300;
+    align-items: center;
+    justify-content: center;
+  }
+  .admin-overlay.show { display: flex; }
+
+  .admin-box {
+    background: var(--paper-light, #FFF7E0);
+    border: 1px solid var(--line, #D4C5A9);
+    box-shadow: 0 8px 32px rgba(0,0,0,.3);
+    padding: 28px 36px;
+    text-align: center;
+    min-width: 280px;
+  }
+  .admin-box h3 {
+    font-size: 17px;
+    letter-spacing: 2px;
+    margin-bottom: 18px;
+    color: var(--ink, #3E2723);
+  }
+  .admin-box input {
+    width: 220px;
+    height: 34px;
+    border: 1px solid var(--line, #D4C5A9);
+    background: #FFF;
+    padding: 0 10px;
+    font-size: 14px;
+    color: var(--ink, #3E2723);
+    outline: none;
+    margin-bottom: 10px;
+    font-family: inherit;
+  }
+  .admin-box input:focus { border-color: var(--ink, #3E2723); }
+  .admin-box .admin-btn {
+    margin-top: 8px;
+    padding: 6px 22px;
+    font-size: 14px;
+    background: var(--ink, #3E2723);
+    color: var(--paper-light, #FFF7E0);
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    letter-spacing: 1px;
+  }
+  .admin-box .admin-btn:hover { opacity: .85; }
+  .admin-box .admin-error {
+    display: none;
+    font-size: 13px;
+    color: #c0392b;
+    margin-top: 8px;
+  }
+  .admin-box .admin-error.show { display: block; }
+  .admin-box .admin-logout {
+    margin-top: 14px;
+    font-size: 12px;
+    color: var(--ink-faint, #8D6E63);
+    cursor: pointer;
+    text-decoration: underline;
+  }
+
+  /* 管理员模式：隐藏线索标题显形 */
+  body.admin-mode .hidden-clue .caret,
+  body.admin-mode .hidden-clue .news-title {
+    color: var(--ink, #3E2723) !important;
+  }
+
+  /* ===== 隐藏式左侧导航栏 ===== */
+  .nav-trigger {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 12px;
+    height: 100vh;
+    z-index: 20;
+  }
+
+  .nav-trigger:hover .side-nav,
+  .side-nav:hover {
+    transform: translateX(0);
+  }
+
+  .side-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 210px;
+    height: 100vh;
+    background: var(--paper-light);
+    border-right: 1px solid var(--line);
+    box-shadow: 4px 0 18px rgba(70, 50, 30, .15);
+    transform: translateX(-100%);
+    transition: transform .25s ease;
+    z-index: 21;
+    padding: 28px 0;
+    overflow-y: auto;
+  }
+
+  .side-nav::after {
+    content: "‹";
+    position: fixed;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 22px;
+    color: var(--ink-faint);
+    pointer-events: none;
+  }
+
+  .nav-head {
+    text-align: center;
+    padding-bottom: 18px;
+    margin-bottom: 14px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .nav-head .nav-logo {
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+    margin: 0 auto 10px;
+    border: 1px solid var(--line);
+  }
+
+  .nav-head .nav-title {
+    font-size: 16px;
+    letter-spacing: 6px;
+    text-indent: 6px;
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  .nav-item {
+    display: block;
+    padding: 13px 28px;
+    font-size: 15px;
+    letter-spacing: 3px;
+    text-indent: 3px;
+    color: var(--ink-dim);
+    text-decoration: none;
+    cursor: pointer;
+    user-select: none;
+    border-left: 3px solid transparent;
+    transition: background .15s, color .15s, border-color .15s;
+  }
+
+  .nav-item:hover {
+    background: rgba(165, 67, 47, .08);
+    color: var(--accent);
+  }
+
+  .nav-item.active {
+    color: var(--accent);
+    background: rgba(165, 67, 47, .1);
+    border-left-color: var(--accent);
+    font-weight: 700;
+  }
+
+  /* ===== 搜索框（顶部） ===== */
+  .top-bar {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 18px 32px 0;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .search-box {
+    display: flex;
+    align-items: center;
+  }
+
+  .search-box input {
+    width: 220px;
+    height: 34px;
+    background: var(--paper-light);
+    border: 1px solid var(--line);
+    border-right: none;
+    color: var(--ink);
+    padding: 0 12px;
+    font-family: inherit;
+    font-size: 13px;
+    letter-spacing: 1px;
+    outline: none;
+  }
+
+  .search-box input::placeholder { color: var(--ink-faint); }
+  .search-box input:focus { border-color: var(--accent); }
+
+  .search-box button {
+    height: 34px;
+    padding: 0 18px;
+    background: rgba(165, 67, 47, .1);
+    border: 1px solid var(--line);
+    color: var(--accent);
+    font-family: inherit;
+    font-size: 13px;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: background .15s;
+  }
+
+  .search-box button:hover { background: rgba(165, 67, 47, .2); }
+</style>
+</head>
+<body>
+
+<!-- 隐藏式导航栏 -->
+<div class="nav-trigger">
+  <nav class="side-nav">
+    <div class="nav-head">
+      <img class="nav-logo" src="images/logo.jpeg" alt="仙女村图腾">
+      <div class="nav-title">仙女村</div>
+    </div>
+    <a class="nav-item" data-nav="folk">体验风土人情</a>
+    <a class="nav-item" data-nav="story">仙女的故事</a>
+    <a class="nav-item" data-nav="show">仙女表演</a>
+    <a class="nav-item" href="news.html">近期新闻</a>
+    <a class="nav-item admin-only" id="navXcpp" href="xcpp.html" onclick="return checkXcppEntry(this.href)" style="display:none"><span class="nav-lock">🔒</span> 仙女档案</a>
+  </nav>
+</div>
+
+<!-- 管理员入口图标（左上角） -->
+<div class="admin-entry-wrap" id="adminEntryWrap">
+  <img class="admin-entry" id="adminEntry" src="images/admin-icon.png" alt="管理员" title="管理员登录">
+  <span class="admin-badge" id="adminBadge">✓</span>
+</div>
+
+<div class="page">
+
+  <div class="top-bar">
+    <div class="search-box">
+      <input id="searchInput" type="text" placeholder="输入关键词搜索..." maxlength="30">
+      <button onclick="doSearch()">搜 索</button>
+    </div>
+  </div>
+
+  <header class="masthead">
+    <img class="site-logo" src="images/logo.jpeg" alt="仙女村图腾">
+    <h1 class="site-title">仙女村</h1>
+    <div class="site-welcome">欢迎您来</div>
+  </header>
+
+  <figure class="hero">
+    <img src="images/cunkou.png" alt="仙女村村口">
+    <figcaption class="hero-caption">村 口</figcaption>
+  </figure>
+
+  <nav class="tab-bar">
+    <div class="tab" data-tab="folk">体验风土人情</div>
+    <div class="tab active" data-tab="story">仙女的故事</div>
+    <div class="tab" data-tab="show">仙女表演</div>
+  </nav>
+
+  <!-- 体验风土人情 -->
+  <section class="tab-panel" id="panel-folk">
+    <div class="story-body">
+      <p>该村是拥有近百年历史的普通自然村，自建村以来，地方局势长期安定，少有大的动荡。村里青壮年早年陆续外迁定居，没有晚辈回乡生活，当前常住人口以老年人为主。</p>
+      <p>村内草木长势旺盛，路边、废弃院落和撂荒田地中杂草、灌木肆意蔓延。留存大量老旧房屋与土屋，不少房屋已经空置，墙体风化剥落，部分屋顶坍塌，保留着十分原始的乡村风貌。</p>
+      <p>村庄空心化程度高，日常人烟稀少，整体氛围荒凉。留守老人大多独自居家，平日里活动范围有限，邻里间虽互相认识，但往来不多。当地传承着一项古老的仙女表演民俗，这项活动一直保留至今，只是观看的人极少，场面冷清。</p>
+      <p>村子平时安静沉寂，偶尔会有背包客、游客前来探访参观。外来访客停留时间较短，并不会改变村庄原本的状态，访客离开之后，村子很快又回归冷清。</p>
+    </div>
+  </section>
+
+  <!-- 仙女的故事 -->
+  <section class="tab-panel active" id="panel-story">
+    <h2 class="story-title">七仙女下凡</h2>
+    <div class="story-divider">民间故事版本</div>
+    <figure class="story-figure">
+      <img src="images/xiayu.png" alt="仙女下凡图">
+      <figcaption>仙女下凡图</figcaption>
+    </figure>
+    <div class="story-body">
+      <p>玉皇大帝的七个女儿（七仙女），在天宫看见人间山河秀丽，趁王母娘娘不注意，结伴飞到凡间游玩。</p>
+      <p>最小的七仙女，在湖边遇见了忠厚老实的凡人董永。董永家境贫寒，父亲去世没钱下葬，只能卖身给财主做长工换丧葬费。七仙女被董永的善良孝顺打动，决心留在人间嫁给他。</p>
+      <p>二人成婚后，七仙女织布帮董永还债，百日期满就能恢复自由。</p>
+      <p>可这件事很快传到天庭，玉帝大怒，命令天神把七仙女抓回天宫。夫妻被迫分离，只能在每年七夕，由喜鹊搭成鹊桥，短暂相会。</p>
+    </div>
+  </section>
+
+  <!-- 仙女表演 -->
+  <section class="tab-panel" id="panel-show">
+    <div class="show-layout">
+      <div class="show-text">
+        <p>展演开篇便是三仙归洞，三个灵物在仙者的掌间来去无形，忽隐忽现，转瞬之间便改换位置，来去毫无踪迹，仿佛受仙力驱使，随心挪移，让人难辨虚实。</p>
+        <p>紧接着是凤凰重生的神迹，原本沉寂不动的灵禽，在仙法加持之下重焕生机，振翅而动，仿若枯身复苏，死生一瞬逆转，满是不可思议的玄妙意境。</p>
+        <p>随后登场的神笔马良，仙笔凌空落墨，笔下之物仿佛拥有灵性，笔墨之间，幻象渐生，画中事物似要挣脱纸面，化虚为实，尽显笔墨通神的奇幻。</p>
+        <p>最后为木偶言灵，静置的木偶竟能开口言语，应答自如，木胎似被注入神魂，如同拥有自主意识，一问一答，如梦似幻。</p>
+        <p>整场展演恍若亲临仙域，一幕幕异象接连上演，虚实交错，尽显古老幻术的神奇诡谲，引人沉醉于这亦真亦幻的仙梦之中。</p>
+      </div>
+      <figure class="show-figure">
+        <img src="images/gaitou.jpeg" alt="展演剧照">
+        <figcaption>展演剧照</figcaption>
+      </figure>
+    </div>
+
+    <!-- 门票购买窗口 -->
+    <div class="ticket-box">
+      <h3>仙女表演门票线上购买窗口</h3>
+      <div class="ticket-price">门票价格：<span class="price">10元</span></div>
+      <button class="btn-buy" onclick="openCodeBox()">购买</button>
+    </div>
+  </section>
+
+  <!-- 凭证码输入弹窗 -->
+  <div class="code-overlay" id="codeOverlay">
+    <div class="code-box">
+      <p>请输入支付凭证码</p>
+      <input type="text" class="code-input" id="codeInput" placeholder="凭证码" oninput="hideCodeError()">
+      <div class="code-error" id="codeError">凭证码不正确</div>
+      <button class="code-btn" onclick="checkCode()">购买</button>
+    </div>
+  </div>
+
+  <!-- 管理员登录弹窗 -->
+  <div class="admin-overlay" id="adminOverlay">
+    <div class="admin-box" id="adminLoginBox">
+      <h3>管理员登录</h3>
+      <input type="text" id="adminUser" placeholder="账号" autocomplete="off">
+      <input type="password" id="adminPass" placeholder="密码" autocomplete="off">
+      <div class="admin-error" id="adminError">账号或密码不正确</div>
+      <button class="admin-btn" onclick="submitAdminLogin()">登 录</button>
+    </div>
+    <div class="admin-box admin-info-box" id="adminInfoBox" style="display:none">
+      <h3>管理员</h3>
+      <div class="admin-status">✓ 已登录</div>
+      <div class="admin-sub">当前为管理员模式，可查看隐藏内容</div>
+      <button class="admin-btn" onclick="logoutAdmin()">退出登录</button>
+    </div>
+  </div>
+
+  <!-- 仙女档案密码弹窗 -->
+  <div class="admin-overlay" id="xcppOverlay">
+    <div class="admin-box">
+      <h3>仙女档案 · 访问验证</h3>
+      <input type="password" id="xcppPass" placeholder="请输入密码" autocomplete="off">
+      <div class="admin-error" id="xcppError">密码不正确</div>
+      <button class="admin-btn" onclick="submitXcppPass()">进 入</button>
+    </div>
+  </div>
+
+  <!-- 管理员操作 toast 提示 -->
+  <div class="admin-toast" id="adminToast"></div>
+
+  <!-- 门票推出动画舞台 -->
+  <div class="stage-overlay" id="stageOverlay">
+    <div class="stage-black" id="stageBlack"></div>
+    <div class="stage-blur" id="stageBlur"></div>
+    <img class="hand-img" id="handImg" src="images/HAND.png" alt="">
+    <img class="ticket-img" id="ticketImg" src="images/ticket.png" alt="门票" onclick="onTicketClick()">
+    <img class="drop-img" id="drop4" src="images/show4.png" alt="">
+    <img class="drop-img" id="drop5" src="images/show5.png" alt="">
+  </div>
+
+  <footer>
+    仙女村 · 欢迎您来
+  </footer>
+
+</div>
+
+<script>
+  const tabs = document.querySelectorAll('.tab');
+  const panels = document.querySelectorAll('.tab-panel');
+  const navItems = document.querySelectorAll('.nav-item[data-nav]');
+
+  // 核心：激活指定 tab（供 tab-bar 点击、导航栏点击、hash 跳转共用）
+  function activateTab(name) {
+    const valid = ['folk', 'story', 'show'];
+    if (!valid.includes(name)) return;
+
+    tabs.forEach(t => t.classList.toggle('active', t.dataset.tab === name));
+    panels.forEach(p => p.classList.toggle('active', p.id === 'panel-' + name));
+    navItems.forEach(n => n.classList.toggle('active', n.dataset.nav === name));
+  }
+
+  // tab-bar 点击
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => activateTab(tab.dataset.tab));
+  });
+
+  // 导航栏三项点击
+  navItems.forEach(item => {
+    item.addEventListener('click', (e) => {
+      e.preventDefault();
+      activateTab(item.dataset.nav);
+    });
+  });
+
+  // 从 news.html 跳回时读取 hash
+  const hash = (location.hash || '').replace('#', '');
+  if (hash && ['folk', 'story', 'show'].includes(hash)) {
+    activateTab(hash);
+  }
+
+  // 回车搜索
+  const searchInput = document.getElementById('searchInput');
+  searchInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') doSearch();
+  });
+
+  // 伪搜索（ARG：特定关键词返回结果）
+  function doSearch() {
+    const q = searchInput.value.trim();
+    if (!q) return;
+    if (q.includes('董荣') || q.includes('柳小小')) {
+      location.href = 'search.html?q=' + encodeURIComponent(q);
+      return;
+    }
+    if (q.includes('仙女') || q.includes('表演') || q.includes('民俗')) {
+      if (isAdmin()) { location.href = 'search.html?q=' + encodeURIComponent(q); return; }
+      showAdminToast('未找到关于“' + q + '”的结果', 2500);
+    } else if (q.includes('故事') || q.includes('传说') || q.includes('七仙女') || q.includes('董永')) {
+      activateTab('story');
+    } else if (q.includes('盖头') || q.includes('剧照') || q.includes('表演')) {
+      activateTab('show');
+    } else if (q.includes('风土') || q.includes('空心') || q.includes('荒芜') || q.includes('村况')) {
+      activateTab('folk');
+    } else {
+      showAdminToast('未找到关于“' + q + '”的结果', 2500);
+    }
+  }
+
+  // ===== 门票购买逻辑 =====
+  function openCodeBox() {
+    document.getElementById('codeOverlay').classList.add('show');
+    document.getElementById('codeError').classList.remove('show');
+    document.getElementById('codeInput').value = '';
+    document.getElementById('codeInput').focus();
+  }
+
+  function hideCodeError() {
+    document.getElementById('codeError').classList.remove('show');
+  }
+
+  function checkCode() {
+    var input = document.getElementById('codeInput');
+    var code = input.value.trim().toUpperCase();
+    if (code === 'AET806ZK') {
+      document.getElementById('codeOverlay').classList.remove('show');
+      startTicketShow();
+    } else {
+      input.value = '';
+      document.getElementById('codeError').classList.add('show');
+      input.focus();
+    }
+  }
+
+  function startTicketShow() {
+    var stage = document.getElementById('stageOverlay');
+    var blur = document.getElementById('stageBlur');
+    var hand = document.getElementById('handImg');
+    var ticket = document.getElementById('ticketImg');
+
+    stage.classList.add('show');
+
+    // 1. 背景模糊
+    setTimeout(function() { blur.classList.add('on'); }, 100);
+
+    // 2. 手和门票一起从上方推下（2秒）
+    setTimeout(function() {
+      hand.classList.add('push');
+      ticket.classList.add('push');
+    }, 500);
+
+    // 3. 手停留1.5秒后撤出，门票留在中央（2秒）
+    setTimeout(function() {
+      hand.classList.remove('push');
+      hand.classList.add('withdraw');
+    }, 4000);
+  }
+
+  function onTicketClick() {
+    var ticket = document.getElementById('ticketImg');
+    var black = document.getElementById('stageBlack');
+    var drop4 = document.getElementById('drop4');
+    var drop5 = document.getElementById('drop5');
+
+    // 门票淡出
+    ticket.style.transition = 'opacity .5s';
+    ticket.style.opacity = '0';
+
+    // 页面逐渐黑下来
+    setTimeout(function() {
+      black.classList.add('on');
+    }, 300);
+
+    // 图片4从顶部滑入（1.2s动画）
+    setTimeout(function() {
+      drop4.classList.add('slide-in');
+    }, 1500);
+
+    // 图片4停留2.5秒后淡出（不先移除slide-in，避免位置跳回）
+    setTimeout(function() {
+      drop4.classList.add('fadeout');
+    }, 5200);
+
+    // 图片4淡出完成后，图片5从顶部滑入
+    setTimeout(function() {
+      drop4.classList.remove('slide-in', 'fadeout');
+      drop5.classList.add('slide-in');
+    }, 6200);
+
+    // 图片5停留2.5秒后淡出
+    setTimeout(function() {
+      drop5.classList.add('fadeout');
+    }, 9900);
+
+    // 全部结束，清理舞台
+    setTimeout(function() {
+      drop5.classList.remove('slide-in', 'fadeout');
+      drop4.classList.remove('slide-in', 'fadeout');
+      black.classList.remove('on');
+      document.getElementById('stageBlur').classList.remove('on');
+      document.getElementById('stageOverlay').classList.remove('show');
+      // 重置
+      ticket.classList.remove('push');
+      ticket.style.opacity = '';
+      ticket.style.transition = '';
+      document.getElementById('handImg').classList.remove('push', 'withdraw');
+    }, 11300);
+  }
+
+  // ===== 管理员登录逻辑 =====
+  function isAdmin() { return localStorage.getItem('xc_admin') === '1'; }
+
+  function showAdminToast(msg, duration) {
+    var t = document.getElementById('adminToast');
+    if (!t) return;
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(window._adminToastTimer);
+    window._adminToastTimer = setTimeout(function() {
+      t.classList.remove('show');
+    }, duration || 1500);
+  }
+
+  function applyAdminMode() {
+    var navXcpp = document.getElementById('navXcpp');
+    if (isAdmin()) {
+      document.body.classList.add('admin-mode');
+      var entry = document.getElementById('adminEntry');
+      var wrap = document.getElementById('adminEntryWrap');
+      if (entry) {
+        entry.classList.add('logged-in');
+        entry.title = '管理员已登录 · 点击管理';
+      }
+      if (wrap) wrap.classList.add('logged-in');
+      if (navXcpp) navXcpp.style.display = 'block';
+    } else {
+      if (navXcpp) navXcpp.style.display = 'none';
+    }
+  }
+  applyAdminMode();
+
+  document.getElementById('adminEntry').addEventListener('click', function() {
+    var overlay = document.getElementById('adminOverlay');
+    document.getElementById('adminError').classList.remove('show');
+    if (isAdmin()) {
+      // 已登录 → 显示退出登录弹窗
+      document.getElementById('adminLoginBox').style.display = 'none';
+      document.getElementById('adminInfoBox').style.display = 'block';
+      overlay.classList.add('show');
+    } else {
+      // 未登录 → 显示登录表单
+      document.getElementById('adminLoginBox').style.display = 'block';
+      document.getElementById('adminInfoBox').style.display = 'none';
+      overlay.classList.add('show');
+      document.getElementById('adminUser').focus();
+    }
+  });
+
+  document.getElementById('adminOverlay').addEventListener('click', function(e) {
+    if (e.target === this) this.classList.remove('show');
+  });
+
+  function submitAdminLogin() {
+    var u = document.getElementById('adminUser').value.trim();
+    var p = document.getElementById('adminPass').value.trim();
+    var err = document.getElementById('adminError');
+    if (u === 'guanliyuan' && p === '19802307') {
+      localStorage.setItem('xc_admin', '1');
+      applyAdminMode();
+      document.getElementById('adminOverlay').classList.remove('show');
+      showAdminToast('登录成功');
+    } else {
+      err.classList.add('show');
+    }
+  }
+
+  function logoutAdmin() {
+    localStorage.removeItem('xc_admin');
+    document.body.classList.remove('admin-mode');
+    var entry = document.getElementById('adminEntry');
+    var wrap = document.getElementById('adminEntryWrap');
+    if (entry) {
+      entry.classList.remove('logged-in');
+      entry.title = '管理员登录';
+    }
+    if (wrap) wrap.classList.remove('logged-in');
+    var navXcpp = document.getElementById('navXcpp');
+    if (navXcpp) navXcpp.style.display = 'none';
+    document.getElementById('adminOverlay').classList.remove('show');
+  }
+
+  document.getElementById('adminPass').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') submitAdminLogin();
+  });
+  document.getElementById('adminUser').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') document.getElementById('adminPass').focus();
+  });
+
+  // ===== 仙女档案密码门 =====
+  var _xcppHref = '';
+  function checkXcppEntry(href) {
+    // 无论是否管理员，每次进入仙女档案都需输入密码
+    _xcppHref = href;
+    var overlay = document.getElementById('xcppOverlay');
+    var err = document.getElementById('xcppError');
+    document.getElementById('xcppPass').value = '';
+    err.classList.remove('show');
+    overlay.classList.add('show');
+    setTimeout(function() { document.getElementById('xcppPass').focus(); }, 100);
+    return false;
+  }
+
+  document.getElementById('xcppOverlay').addEventListener('click', function(e) {
+    if (e.target === this) this.classList.remove('show');
+  });
+
+  function submitXcppPass() {
+    var p = document.getElementById('xcppPass').value.trim();
+    if (p === '89771') {
+      document.getElementById('xcppOverlay').classList.remove('show');
+      location.href = _xcppHref || 'xcpp.html';
+    } else {
+      document.getElementById('xcppError').classList.add('show');
+    }
+  }
+
+  document.getElementById('xcppPass').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') submitXcppPass();
+  });
+</script>
+
+</body>
+</html>

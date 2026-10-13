@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>仙女档案 · 仙女村</title>
+<style>
+  :root {
+    --ink: #3E2723;
+    --ink-faint: #8D6E63;
+    --paper: #F5EDE0;
+    --paper-light: #FAF3E4;
+    --line: #D4C5A9;
+    --accent: #A5432F;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: "KaiTi", "STKaiti", "楷体", serif;
+    background: var(--paper);
+    color: var(--ink);
+    min-height: 100vh;
+  }
+  .page { max-width: 800px; margin: 0 auto; padding: 40px 24px 80px; }
+  .back {
+    display: inline-block;
+    margin-bottom: 20px;
+    color: var(--ink-faint);
+    text-decoration: none;
+    font-size: 14px;
+    letter-spacing: 1px;
+  }
+  .back:hover { color: var(--accent); }
+  h1 {
+    font-size: 30px;
+    letter-spacing: 8px;
+    text-align: center;
+    margin-bottom: 8px;
+  }
+  .subtitle {
+    text-align: center;
+    color: var(--ink-faint);
+    font-size: 14px;
+    letter-spacing: 4px;
+    margin-bottom: 40px;
+  }
+  .section {
+    border: 1px solid var(--line);
+    background: var(--paper-light);
+    padding: 24px 28px;
+    margin-bottom: 24px;
+  }
+  .section h2 {
+    font-size: 20px;
+    letter-spacing: 4px;
+    margin: 0 0 16px 0;
+    padding-bottom: 10px;
+    border-bottom: 1px dashed var(--line);
+  }
+
+  /* 基本信息 · 档案表 */
+  .info-grid { border-top: 1px solid var(--line); }
+  .info-row { display: flex; border-bottom: 1px solid var(--line); font-size: 15px; line-height: 1.9; }
+  .info-k {
+    flex: 0 0 170px;
+    padding: 8px 14px;
+    background: rgba(212,197,169,.28);
+    color: var(--ink);
+    letter-spacing: 2px;
+    border-right: 1px solid var(--line);
+  }
+  .info-v { flex: 1; padding: 8px 16px; color: var(--ink-faint); letter-spacing: 1px; }
+
+  /* 日常记录 · 观察日志 */
+  .log-meta { font-size: 13px; color: var(--ink-faint); letter-spacing: 2px; margin: -6px 0 12px 2px; }
+  .log-list {
+    max-height: 62vh;
+    overflow-y: auto;
+    border: 1px solid var(--line);
+    background: rgba(255,255,255,.35);
+  }
+  .log-row {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    padding: 7px 14px;
+    font-size: 14px;
+    line-height: 1.8;
+    border-bottom: 1px dotted rgba(212,197,169,.7);
+    letter-spacing: 1px;
+  }
+  .log-row:last-child { border-bottom: none; }
+  .log-no { flex: 0 0 34px; color: #B4A288; font-size: 12px; letter-spacing: 0; }
+  .log-date { flex: 0 0 150px; color: var(--ink); }
+  .log-text { flex: 1; color: var(--ink-faint); }
+  .log-normal .log-text { color: var(--ink-faint); }
+  .log-event .log-text { color: var(--accent); }
+  .log-row:has(.log-note) { flex-wrap: wrap; }
+  .log-note {
+    flex: 1 1 100%;
+    margin: 4px 0 2px 46px;
+    padding-left: 12px;
+    border-left: 3px solid var(--accent);
+    color: var(--accent);
+    font-size: 13.5px;
+    line-height: 1.8;
+  }
+
+  footer {
+    text-align: center;
+    padding: 40px 0 0;
+    font-size: 13px;
+    color: var(--ink-faint);
+    letter-spacing: 3px;
+  }
+
+  /* 密码门 */
+  .gate-overlay {
+    position: fixed;
+    inset: 0;
+    background: var(--paper);
+    z-index: 999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .gate-box { text-align: center; }
+  .gate-box h2 {
+    font-size: 22px;
+    letter-spacing: 4px;
+    margin-bottom: 24px;
+  }
+  .gate-box input {
+    width: 220px;
+    height: 38px;
+    border: 1px solid var(--line);
+    background: #FFF;
+    padding: 0 12px;
+    font-size: 15px;
+    color: var(--ink);
+    outline: none;
+    font-family: inherit;
+    text-align: center;
+    letter-spacing: 2px;
+  }
+  .gate-box input:focus { border-color: var(--ink); }
+  .gate-box button {
+    display: block;
+    margin: 14px auto 0;
+    padding: 7px 28px;
+    font-size: 14px;
+    background: var(--ink);
+    color: var(--paper-light);
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    letter-spacing: 2px;
+  }
+  .gate-box button:hover { opacity: .85; }
+  .gate-box .gate-err {
+    display: none;
+    font-size: 13px;
+    color: var(--accent);
+    margin-top: 10px;
+  }
+  .gate-box .gate-err.show { display: block; }
+</style>
+</head>
+<body>
+
+<div class="gate-overlay" id="gateOverlay">
+  <div class="gate-box">
+    <h2>仙女档案 · 访问验证</h2>
+    <input type="password" id="gatePass" placeholder="请输入密码" autocomplete="off">
+    <div class="gate-err" id="gateErr">密码不正确</div>
+    <button onclick="submitGate()">进 入</button>
+  </div>
+</div>
+
+<div class="page" id="mainContent" style="display:none">
+  <a class="back" href="index.html">← 返回首页</a>
+  <h1>仙女档案</h1>
+  <div class="subtitle">—— 机密文档 ——</div>
+
+  <div class="section">
+    <h2>基本信息</h2>
+    <div class="info-grid">
+        <div class="info-row"><div class="info-k">代号</div><div class="info-v">"仙女"</div></div>
+        <div class="info-row"><div class="info-k">编号</div><div class="info-v">███</div></div>
+        <div class="info-row"><div class="info-k">种类</div><div class="info-v">██████</div></div>
+        <div class="info-row"><div class="info-k">近期危险程度</div><div class="info-v">低</div></div>
+        <div class="info-row"><div class="info-k">历史危险行为</div><div class="info-v">疑似三起</div></div>
+        <div class="info-row"><div class="info-k">首次观测日期</div><div class="info-v">████年██月██日</div></div>
+        <div class="info-row"><div class="info-k">可考究首次出现日期</div><div class="info-v">1932年6月26日</div></div>
+        <div class="info-row"><div class="info-k">身高</div><div class="info-v">约163.72m</div></div>
+        <div class="info-row"><div class="info-k">重量</div><div class="info-v">未知</div></div>
+        <div class="info-row"><div class="info-k">常态外观</div><div class="info-v">常态坐姿，头盖粉色丝绸盖头，外观不可见，无外露皮肤，推测皮肤与人类不同</div></div>
+        <div class="info-row"><div class="info-k">能力</div><div class="info-v">未知</div></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>日常记录</h2>
+    <div class="log-meta">共 116 条观察记录</div>
+    <div class="log-list">
+        <div class="log-row log-normal"><span class="log-no">001</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数7人</span></div>
+        <div class="log-row log-normal"><span class="log-no">002</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数7人</span></div>
+        <div class="log-row log-normal"><span class="log-no">003</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数9人</span></div>
+        <div class="log-row log-normal"><span class="log-no">004</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数9人</span></div>
+        <div class="log-row log-normal"><span class="log-no">005</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数5人</span></div>
+        <div class="log-row log-normal"><span class="log-no">006</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数7人</span></div>
+        <div class="log-row log-normal"><span class="log-no">007</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数7人</span></div>
+        <div class="log-row log-normal"><span class="log-no">008</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数9人</span></div>
+        <div class="log-row log-normal"><span class="log-no">009</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数9人</span></div>
+        <div class="log-row log-event"><span class="log-no">010</span><span class="log-date">████年██月██日</span><span class="log-text">天气原因，演出暂停</span></div>
+        <div class="log-row log-normal"><span class="log-no">011</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数5人</span></div>
+        <div class="log-row log-normal"><span class="log-no">012</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数7人</span></div>
+        <div class="log-row log-normal"><span class="log-no">013</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数1人</span></div>
+        <div class="log-row log-normal"><span class="log-no">014</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数5人</span></div>
+        <div class="log-row log-normal"><span class="log-no">015</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数7人</span></div>
+        <div class="log-row log-normal"><span class="log-no">016</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数3人</span></div>
+        <div class="log-row log-normal"><span class="log-no">017</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数1人</span></div>
+        <div class="log-row log-normal"><span class="log-no">018</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数5人</span></div>
+        <div class="log-row log-normal"><span class="log-no">019</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数1人</span></div>
+        <div class="log-row log-event"><span class="log-no">020</span><span class="log-date">████年██月██日</span><span class="log-text">天气原因，演出暂停</span></div>
+        <div class="log-row log-normal"><span class="log-no">021</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数7人</span></div>
+        <div class="log-row log-normal"><span class="log-no">022</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数6人</span></div>
+        <div class="log-row log-normal"><span class="log-no">023</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数8人</span></div>
+        <div class="log-row log-normal"><span class="log-no">024</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数5人</span></div>
+        <div class="log-row log-normal"><span class="log-no">025</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数1人</span></div>
+        <div class="log-row log-normal"><span class="log-no">026</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数8人</span></div>
+        <div class="log-row log-normal"><span class="log-no">027</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数4人</span></div>
+        <div class="log-row log-normal"><span class="log-no">028</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数1人</span></div>
+        <div class="log-row log-normal"><span class="log-no">029</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数6人</span></div>
+        <div class="log-row log-normal"><span class="log-no">030</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数6人</span></div>
+        <div class="log-row log-normal"><span class="log-no">031</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数4人</span></div>
+        <div class="log-row log-normal"><span class="log-no">032</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数0人</span></div>
+        <div class="log-row log-normal"><span class="log-no">033</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数7人</span></div>
+        <div class="log-row log-normal"><span class="log-no">034</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数9人</span></div>
+        <div class="log-row log-normal"><span class="log-no">035</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数9人</span></div>
+        <div class="log-row log-normal"><span class="log-no">036</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数0人</span></div>
+        <div class="log-row log-normal"><span class="log-no">037</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数8人</span></div>
+        <div class="log-row log-normal"><span class="log-no">038</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数5人</span></div>
+        <div class="log-row log-event"><span class="log-no">039</span><span class="log-date">████年██月██日</span><span class="log-text">天气原因，演出暂停</span></div>
+        <div class="log-row log-event"><span class="log-no">040</span><span class="log-date">████年██月██日</span><span class="log-text">天气原因，演出暂停</span></div>
+        <div class="log-row log-normal"><span class="log-no">041</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数7人</span></div>
+        <div class="log-row log-normal"><span class="log-no">042</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数7人</span></div>
+        <div class="log-row log-normal"><span class="log-no">043</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数9人</span></div>
+        <div class="log-row log-normal"><span class="log-no">044</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数9人</span></div>
+        <div class="log-row log-normal"><span class="log-no">045</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数5人</span></div>
+        <div class="log-row log-normal"><span class="log-no">046</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数4人</span></div>
+        <div class="log-row log-normal"><span class="log-no">047</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数4人</span></div>
+        <div class="log-row log-normal"><span class="log-no">048</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数4人</span></div>
+        <div class="log-row log-normal"><span class="log-no">049</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数4人</span></div>
+        <div class="log-row log-normal"><span class="log-no">050</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数4人</span></div>
+        <div class="log-row log-normal"><span class="log-no">051</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数4人</span></div>
+        <div class="log-row log-normal"><span class="log-no">052</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数4人</span></div>
+        <div class="log-row log-event"><span class="log-no">053</span><span class="log-date">████年██月██日</span><span class="log-text">村内一瞎子与他人发生争吵，具体内容是村民随口提起仙女唱歌美妙动听，瞎子争论仙女根本不会说话</span>
+          <div class="log-note">（注:观察员确实记得观察目标唱过歌</div></div>
+        <div class="log-row log-normal"><span class="log-no">054</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数7人</span></div>
+        <div class="log-row log-normal"><span class="log-no">055</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数7人</span></div>
+        <div class="log-row log-normal"><span class="log-no">056</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数9人</span></div>
+        <div class="log-row log-normal"><span class="log-no">057</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数9人</span></div>
+        <div class="log-row log-normal"><span class="log-no">058</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数5人</span></div>
+        <div class="log-row log-normal"><span class="log-no">059</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数4人</span></div>
+        <div class="log-row log-normal"><span class="log-no">060</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数7人</span></div>
+        <div class="log-row log-normal"><span class="log-no">061</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数7人</span></div>
+        <div class="log-row log-normal"><span class="log-no">062</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数9人</span></div>
+        <div class="log-row log-normal"><span class="log-no">063</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数9人</span></div>
+        <div class="log-row log-normal"><span class="log-no">064</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数5人</span></div>
+        <div class="log-row log-normal"><span class="log-no">065</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数4人</span></div>
+        <div class="log-row log-normal"><span class="log-no">066</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数4人</span></div>
+        <div class="log-row log-normal"><span class="log-no">067</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数4人</span></div>
+        <div class="log-row log-normal"><span class="log-no">068</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数4人</span></div>
+        <div class="log-row log-normal"><span class="log-no">069</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数4人</span></div>
+        <div class="log-row log-normal"><span class="log-no">070</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数4人</span></div>
+        <div class="log-row log-event"><span class="log-no">071</span><span class="log-date">████年██月██日</span><span class="log-text">村口有俩小孩打架</span></div>
+        <div class="log-row log-normal"><span class="log-no">072</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数4人</span></div>
+        <div class="log-row log-normal"><span class="log-no">073</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数4人</span></div>
+        <div class="log-row log-normal"><span class="log-no">074</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数4人</span></div>
+        <div class="log-row log-normal"><span class="log-no">075</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数4人</span></div>
+        <div class="log-row log-normal"><span class="log-no">076</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数4人</span></div>
+        <div class="log-row log-normal"><span class="log-no">077</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数4人</span></div>
+        <div class="log-row log-normal"><span class="log-no">078</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数7人</span></div>
+        <div class="log-row log-event"><span class="log-no">079</span><span class="log-date">████年██月██日</span><span class="log-text">天气原因，演出暂停</span></div>
+        <div class="log-row log-normal"><span class="log-no">080</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数7人</span></div>
+        <div class="log-row log-normal"><span class="log-no">081</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数9人</span></div>
+        <div class="log-row log-normal"><span class="log-no">082</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数9人</span></div>
+        <div class="log-row log-normal"><span class="log-no">083</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数5人</span></div>
+        <div class="log-row log-normal"><span class="log-no">084</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数4人</span></div>
+        <div class="log-row log-normal"><span class="log-no">085</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数4人</span></div>
+        <div class="log-row log-event"><span class="log-no">086</span><span class="log-date">████年██月██日</span><span class="log-text">赵氏喜宴办大席</span></div>
+        <div class="log-row log-normal"><span class="log-no">087</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数4人</span></div>
+        <div class="log-row log-normal"><span class="log-no">088</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数4人</span></div>
+        <div class="log-row log-normal"><span class="log-no">089</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数4人</span></div>
+        <div class="log-row log-normal"><span class="log-no">090</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数4人</span></div>
+        <div class="log-row log-normal"><span class="log-no">091</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数7人</span></div>
+        <div class="log-row log-normal"><span class="log-no">092</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数7人</span></div>
+        <div class="log-row log-normal"><span class="log-no">093</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数9人</span></div>
+        <div class="log-row log-normal"><span class="log-no">094</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数9人</span></div>
+        <div class="log-row log-normal"><span class="log-no">095</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数5人</span></div>
+        <div class="log-row log-normal"><span class="log-no">096</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数4人</span></div>
+        <div class="log-row log-normal"><span class="log-no">097</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数4人</span></div>
+        <div class="log-row log-event"><span class="log-no">098</span><span class="log-date">████年██月██日</span><span class="log-text">天气原因，演出暂停</span></div>
+        <div class="log-row log-normal"><span class="log-no">099</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数4人</span></div>
+        <div class="log-row log-normal"><span class="log-no">100</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数4人</span></div>
+        <div class="log-row log-normal"><span class="log-no">101</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数4人</span></div>
+        <div class="log-row log-event"><span class="log-no">102</span><span class="log-date">████年██月██日</span><span class="log-text">天气原因，演出暂停</span></div>
+        <div class="log-row log-normal"><span class="log-no">103</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数4人</span></div>
+        <div class="log-row log-normal"><span class="log-no">104</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数7人</span></div>
+        <div class="log-row log-normal"><span class="log-no">105</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数7人</span></div>
+        <div class="log-row log-normal"><span class="log-no">106</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数9人</span></div>
+        <div class="log-row log-normal"><span class="log-no">107</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数9人</span></div>
+        <div class="log-row log-normal"><span class="log-no">108</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数5人</span></div>
+        <div class="log-row log-normal"><span class="log-no">109</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数4人</span></div>
+        <div class="log-row log-normal"><span class="log-no">110</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数4人</span></div>
+        <div class="log-row log-event"><span class="log-no">111</span><span class="log-date">████年██月██日</span><span class="log-text">柳氏继父去世</span></div>
+        <div class="log-row log-normal"><span class="log-no">112</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数4人</span></div>
+        <div class="log-row log-normal"><span class="log-no">113</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数4人</span></div>
+        <div class="log-row log-normal"><span class="log-no">114</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数4人</span></div>
+        <div class="log-row log-normal"><span class="log-no">115</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数4人</span></div>
+        <div class="log-row log-normal"><span class="log-no">116</span><span class="log-date">████年██月██日</span><span class="log-text">“仙女”正常出演，到场人数4人</span></div>
+    </div>
+  </div>
+
+  <footer>仙女村 · 欢迎您来</footer>
+</div>
+
+<script>
+  function openGate() {
+    document.getElementById('gateOverlay').style.display = 'none';
+    document.getElementById('mainContent').style.display = 'block';
+  }
+
+  function submitGate() {
+    var p = document.getElementById('gatePass').value.trim();
+    if (p === '89771') {
+      openGate();
+    } else {
+      document.getElementById('gateErr').classList.add('show');
+    }
+  }
+
+  document.getElementById('gatePass').addEventListener('keydown', function(e) {
+    document.getElementById('gateErr').classList.remove('show');
+    if (e.key === 'Enter') submitGate();
+  });
+
+  // 每次进入仙女档案均需输入密码（含直接访问 URL、刷新页面）
+  setTimeout(function() { document.getElementById('gatePass').focus(); }, 100);
+</script>
+</body>
+</html>

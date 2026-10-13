@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1080">
+<title>搜索结果 · 仙女村</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%23e9ddcc'/%3E%3Ctext x='32' y='42' font-size='26' text-anchor='middle' fill='%23a5432f' font-family='serif'%3E仙%3C/text%3E%3C/svg%3E">
+<style>
+  :root {
+    --paper: #e9ddcc;
+    --paper-light: #f3ead9;
+    --ink: #43382c;
+    --ink-dim: #7a6a58;
+    --ink-faint: #a5977f;
+    --accent: #a5432f;
+    --line: rgba(90, 70, 50, .25);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: "KaiTi", "STKaiti", "SimSun", "Songti SC", serif;
+    color: var(--ink);
+    background-color: var(--paper);
+    background-image: url("images/paper.jpg");
+    background-size: 380px;
+    min-width: 1080px;
+    min-height: 100vh;
+    overflow-x: auto;
+  }
+
+  .page {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 0 32px 60px;
+  }
+
+  /* ===== 隐藏式左侧导航栏 ===== */
+  .nav-trigger {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 12px;
+    height: 100vh;
+    z-index: 20;
+  }
+
+  .nav-trigger:hover .side-nav,
+  .side-nav:hover {
+    transform: translateX(0);
+  }
+
+  .side-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 210px;
+    height: 100vh;
+    background: var(--paper-light);
+    border-right: 1px solid var(--line);
+    box-shadow: 4px 0 18px rgba(70, 50, 30, .15);
+    transform: translateX(-100%);
+    transition: transform .25s ease;
+    z-index: 21;
+    padding: 28px 0;
+    overflow-y: auto;
+  }
+
+  .side-nav::after {
+    content: "‹";
+    position: fixed;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 22px;
+    color: var(--ink-faint);
+    pointer-events: none;
+  }
+
+  .nav-head {
+    text-align: center;
+    padding-bottom: 18px;
+    margin-bottom: 14px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .nav-head .nav-logo {
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+    margin: 0 auto 10px;
+    border: 1px solid var(--line);
+  }
+
+  .nav-head .nav-title {
+    font-size: 16px;
+    letter-spacing: 6px;
+    text-indent: 6px;
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  .nav-item {
+    display: block;
+    padding: 13px 28px;
+    font-size: 15px;
+    letter-spacing: 3px;
+    text-indent: 3px;
+    color: var(--ink-dim);
+    text-decoration: none;
+    cursor: pointer;
+    user-select: none;
+    border-left: 3px solid transparent;
+    transition: background .15s, color .15s, border-color .15s;
+  }
+
+  .nav-item:hover {
+    background: rgba(165, 67, 47, .08);
+    color: var(--accent);
+  }
+
+  .nav-item.active {
+    color: var(--accent);
+    background: rgba(165, 67, 47, .1);
+    border-left-color: var(--accent);
+    font-weight: 700;
+  }
+
+  /* ===== 搜索框（顶部） ===== */
+  .top-bar {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 18px 32px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .back-home {
+    padding: 8px 18px;
+    font-size: 14px;
+    letter-spacing: 3px;
+    text-indent: 3px;
+    color: var(--ink-dim);
+    text-decoration: none;
+    border: 1px solid var(--line);
+    background: var(--paper-light);
+    transition: color .15s, border-color .15s;
+  }
+
+  .back-home:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .search-box {
+    display: flex;
+    align-items: center;
+  }
+
+  .search-box input {
+    width: 220px;
+    height: 34px;
+    background: var(--paper-light);
+    border: 1px solid var(--line);
+    border-right: none;
+    color: var(--ink);
+    padding: 0 12px;
+    font-family: inherit;
+    font-size: 13px;
+    letter-spacing: 1px;
+    outline: none;
+  }
+
+  .search-box input::placeholder { color: var(--ink-faint); }
+  .search-box input:focus { border-color: var(--accent); }
+
+  .search-box button {
+    height: 34px;
+    padding: 0 18px;
+    background: rgba(165, 67, 47, .1);
+    border: 1px solid var(--line);
+    color: var(--accent);
+    font-family: inherit;
+    font-size: 13px;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: background .15s;
+  }
+
+  .search-box button:hover { background: rgba(165, 67, 47, .2); }
+
+  /* ===== 标题区 ===== */
+  .masthead {
+    text-align: center;
+    padding: 30px 0 24px;
+  }
+
+  .site-title {
+    font-size: 56px;
+    letter-spacing: 24px;
+    text-indent: 24px;
+    color: var(--ink);
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .site-sub {
+    margin-top: 14px;
+    font-size: 16px;
+    letter-spacing: 12px;
+    text-indent: 12px;
+    color: var(--ink-dim);
+  }
+
+  .site-sub .keyword {
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  /* ===== 搜索结果 ===== */
+  .result-wrap {
+    border: 1px solid var(--line);
+    background: var(--paper-light);
+    box-shadow: 0 4px 18px rgba(70, 50, 30, .12);
+    padding: 36px 48px;
+  }
+
+  .result-card {
+    display: flex;
+    gap: 28px;
+    align-items: center;
+    padding: 22px;
+    border: 1px solid var(--line);
+    background: var(--paper);
+    text-decoration: none;
+    color: inherit;
+    transition: border-color .15s, box-shadow .15s;
+  }
+
+  .result-card:hover {
+    border-color: var(--accent);
+    box-shadow: 0 2px 12px rgba(165, 67, 47, .15);
+  }
+
+  .result-avatar {
+    width: 88px;
+    height: 88px;
+    object-fit: cover;
+    border: 1px solid var(--line);
+    flex-shrink: 0;
+    filter: grayscale(.3);
+  }
+
+  .result-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .result-name {
+    font-size: 22px;
+    color: var(--ink);
+    letter-spacing: 4px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  .result-meta {
+    font-size: 13px;
+    color: var(--ink-dim);
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+  }
+
+  .result-desc {
+    font-size: 14px;
+    color: var(--ink-dim);
+    line-height: 1.8;
+    letter-spacing: 1px;
+  }
+
+  .result-arrow {
+    font-size: 22px;
+    color: var(--ink-faint);
+    flex-shrink: 0;
+  }
+
+  .no-result {
+    text-align: center;
+    padding: 60px 0;
+    color: var(--ink-faint);
+    letter-spacing: 4px;
+    font-size: 15px;
+  }
+
+  footer {
+    text-align: center;
+    padding: 40px 0 0;
+    font-size: 13px;
+    color: var(--ink-faint);
+    letter-spacing: 3px;
+  }
+
+  /* 管理员入口 */
+  .admin-entry-wrap {
+    position: fixed;
+    top: 12px;
+    left: 20px;
+    z-index: 200;
+  }
+  .admin-entry {
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    opacity: .5;
+    transition: opacity .2s;
+    display: block;
+  }
+  .admin-entry:hover { opacity: 1; }
+  .admin-entry.logged-in { opacity: 1; filter: drop-shadow(0 0 4px rgba(165,67,47,.6)); }
+  .admin-badge {
+    display: none;
+    position: absolute;
+    bottom: -4px;
+    right: -4px;
+    width: 14px;
+    height: 14px;
+    background: #A5432F;
+    border-radius: 50%;
+    border: 2px solid #F5EDE0;
+    font-size: 9px;
+    color: #FFF;
+    text-align: center;
+    line-height: 10px;
+    font-weight: bold;
+    pointer-events: none;
+  }
+  .admin-entry-wrap.logged-in .admin-badge { display: block; }
+
+  /* 管理员已登录 · 简洁信息盒 */
+  .admin-info-box { text-align: center; }
+  .admin-info-box .admin-status { font-size: 15px; color: var(--ink, #3E2723); letter-spacing: 1px; margin-bottom: 6px; }
+  .admin-info-box .admin-sub { font-size: 12px; color: var(--ink-faint, #8D6E63); margin-bottom: 18px; }
+  .admin-info-box .admin-btn { background: #c0392b; }
+
+  /* 管理员操作 toast 提示 */
+  .admin-toast {
+    position: fixed;
+    top: 60px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-20px);
+    background: rgba(62,39,35,.92);
+    color: #FFF7E0;
+    padding: 10px 24px;
+    font-size: 14px;
+    letter-spacing: 2px;
+    border-radius: 4px;
+    z-index: 9999;
+    opacity: 0;
+    pointer-events: none;
+    white-space: pre-line;
+    line-height: 1.8;
+    text-align: center;
+    max-width: 80vw;
+    transition: opacity .25s, transform .25s;
+  }
+  .admin-toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  .admin-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.4);
+    z-index: 300;
+    align-items: center;
+    justify-content: center;
+  }
+  .admin-overlay.show { display: flex; }
+
+  .admin-box {
+    background: var(--paper-light, #FFF7E0);
+    border: 1px solid var(--line, #D4C5A9);
+    box-shadow: 0 8px 32px rgba(0,0,0,.3);
+    padding: 28px 36px;
+    text-align: center;
+    min-width: 280px;
+  }
+  .admin-box h3 { font-size: 17px; letter-spacing: 2px; margin-bottom: 18px; color: var(--ink, #3E2723); }
+  .admin-box input { width: 220px; height: 34px; border: 1px solid var(--line, #D4C5A9); background: #FFF; padding: 0 10px; font-size: 14px; color: var(--ink, #3E2723); outline: none; margin-bottom: 10px; font-family: inherit; }
+  .admin-box input:focus { border-color: var(--ink, #3E2723); }
+  .admin-box .admin-btn { margin-top: 8px; padding: 6px 22px; font-size: 14px; background: var(--ink, #3E2723); color: var(--paper-light, #FFF7E0); border: none; cursor: pointer; font-family: inherit; letter-spacing: 1px; }
+  .admin-box .admin-btn:hover { opacity: .85; }
+  .admin-box .admin-error { display: none; font-size: 13px; color: #c0392b; margin-top: 8px; }
+  .admin-box .admin-error.show { display: block; }
+  .admin-box .admin-logout { margin-top: 14px; font-size: 12px; color: var(--ink-faint, #8D6E63); cursor: pointer; text-decoration: underline; }
+  .nav-lock { margin-right: 4px; }
+</style>
+</head>
+<body>
+
+<!-- 隐藏式导航栏 -->
+<div class="nav-trigger">
+  <nav class="side-nav">
+    <div class="nav-head">
+      <img class="nav-logo" src="images/logo.jpeg" alt="仙女村图腾">
+      <div class="nav-title">仙女村</div>
+    </div>
+    <a class="nav-item" href="index.html#folk">体验风土人情</a>
+    <a class="nav-item" href="index.html#story">仙女的故事</a>
+    <a class="nav-item" href="index.html#show">仙女表演</a>
+    <a class="nav-item" href="news.html">近期新闻</a>
+    <a class="nav-item admin-only" id="navXcpp" href="xcpp.html" onclick="return checkXcppEntry(this.href)" style="display:none"><span class="nav-lock">🔒</span>仙女档案</a>
+  </nav>
+</div>
+
+<!-- 管理员入口 -->
+<div class="admin-entry-wrap" id="adminEntryWrap">
+  <img class="admin-entry" id="adminEntry" src="images/admin-icon.png" alt="管理员" title="管理员登录">
+  <span class="admin-badge" id="adminBadge">✓</span>
+</div>
+
+<div class="page">
+
+  <div class="top-bar">
+    <a class="back-home" href="index.html">← 返回首页</a>
+    <div class="search-box">
+      <input id="searchInput" type="text" placeholder="输入关键词搜索..." maxlength="30">
+      <button onclick="doSearch()">搜 索</button>
+    </div>
+  </div>
+
+  <header class="masthead">
+    <h1 class="site-title">仙女村</h1>
+    <div class="site-sub">搜索 "<span class="keyword" id="keywordDisplay"></span>" 的结果</div>
+  </header>
+
+  <div class="result-wrap" id="resultWrap">
+    <!-- 结果动态注入 -->
+  </div>
+
+  <footer>
+    仙女村 · 欢迎您来
+  </footer>
+
+</div>
+
+<script>
+  // 从 URL 取搜索词
+  const params = new URLSearchParams(location.search);
+  const q = params.get('q') || '';
+  document.getElementById('keywordDisplay').textContent = q;
+  document.getElementById('searchInput').value = q;
+
+  // 伪搜索（ARG：特定关键词返回结果，其余显示无结果）
+  const results = {
+    '董荣': [{
+      type: 'person',
+      name: '董荣',
+      avatar: 'images/dongrong.png',
+      meta: '1900 年生 · 仙女村村民',
+      desc: '仙女选中的"丈夫"，组织仙女表演，照顾仙女生活起居。',
+      link: 'dongrong.html'
+    }],
+    '柳小小': [{
+      type: 'person',
+      name: '柳小小',
+      avatar: 'images/lxxz.jpg',
+      meta: '1914 年生 · 柳氏遗孀',
+      desc: '容貌秀美，熟读《抱朴子・论仙》。1934 年失踪，仅留下一张字条。',
+      link: 'liuxiaoxiao.html'
+    }]
+  };
+
+  function isAdmin() { return localStorage.getItem('xc_admin') === '1'; }
+
+  function showAdminToast(msg, duration) {
+    var t = document.getElementById('adminToast');
+    if (!t) return;
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(window._adminToastTimer);
+    window._adminToastTimer = setTimeout(function() { t.classList.remove('show'); }, duration || 1500);
+  }
+
+  function renderResults(keyword) {
+    const wrap = document.getElementById('resultWrap');
+    var list = results[keyword] ? results[keyword].slice() : null;
+    // 管理员模式下，搜索"仙女"额外显示"防忘"
+    if (isAdmin() && (keyword.indexOf('仙女') !== -1 || keyword === '仙女')) {
+      if (!list) list = [];
+      list.push({
+        type: 'admin-note',
+        title: '防忘',
+        desc: '',
+        link: 'fangwang.html'
+      });
+    }
+    if (list && list.length) {
+      wrap.innerHTML = list.map(r => {
+        if (r.type === 'admin-note') {
+          return `<a class="result-card" href="${r.link}">
+            <div class="result-info" style="width:100%">
+              <div class="result-name">${r.title}</div>
+              <div class="result-desc" style="color:#999">（点击查看详情）</div>
+            </div>
+            <span class="result-arrow">→</span>
+          </a>`;
+        }
+        return `<a class="result-card" href="${r.link}">
+          <img class="result-avatar" src="${r.avatar}" alt="${r.name}">
+          <div class="result-info">
+            <div class="result-name">${r.name}</div>
+            <div class="result-meta">${r.meta}</div>
+            <div class="result-desc">${r.desc}</div>
+          </div>
+          <span class="result-arrow">→</span>
+        </a>`;
+      }).join('');
+    } else {
+      wrap.innerHTML = '<div class="no-result">未找到与 "' + keyword + '" 相关的内容</div>';
+    }
+  }
+
+  renderResults(q);
+
+  // 首次搜索"柳小小" → 检索页右下角弹一次新邮件通知（纯视觉，不联动邮箱）
+  if (q.indexOf('柳小小') !== -1 && localStorage.getItem('lxx_notify_done') !== '1') {
+    localStorage.setItem('lxx_notify_done', '1');
+    localStorage.setItem('yx_lxx_pending', '1');
+    setTimeout(function() {
+      document.getElementById('lxxMailNotify').classList.add('show');
+      try { new Audio('notify.wav').play(); } catch (e) {}
+    }, 1200);
+  }
+
+  // 回车搜索
+  document.getElementById('searchInput').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') doSearch();
+  });
+
+  function doSearch() {
+    const v = document.getElementById('searchInput').value.trim();
+    if (!v) return;
+    location.href = 'search.html?q=' + encodeURIComponent(v);
+  }
+</script>
+
+<style>
+  #lxxMailNotify{position:fixed;right:24px;bottom:24px;width:280px;background:#2b2620;color:#efe6d6;
+    border:1px solid rgba(255,255,255,.15);border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.35);
+    z-index:9999;cursor:pointer;transform:translateY(24px);opacity:0;pointer-events:none;
+    transition:transform .3s,opacity .3s;font-family:"Microsoft YaHei",sans-serif;}
+  #lxxMailNotify.show{transform:none;opacity:1;pointer-events:auto;}
+  .ln-head{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;
+    background:#8a4a2b;color:#fff;font-size:12px;letter-spacing:2px;border-radius:7px 7px 0 0;}
+  .ln-close{cursor:pointer;padding:0 4px;font-size:14px;line-height:1;}
+  .ln-from,.ln-subject,.ln-preview{padding:2px 12px;font-size:12.5px;}
+  .ln-subject{font-weight:600;font-size:13.5px;}
+  .ln-preview{color:rgba(239,230,214,.6);font-size:11.5px;padding-bottom:10px;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+</style>
+
+<div id="lxxMailNotify">
+  <div class="ln-head"><span>新邮件</span><span class="ln-close" id="lxxNotifyClose">×</span></div>
+  <div class="ln-from">发件人：未知</div>
+  <div class="ln-subject">无标题</div>
+  <div class="ln-preview">::::::::::::::::::::::::…</div>
+</div>
+
+<script>
+  document.getElementById('lxxNotifyClose').addEventListener('click', function(e) {
+    e.stopPropagation();
+    document.getElementById('lxxMailNotify').classList.remove('show');
+  });
+  document.getElementById('lxxMailNotify').addEventListener('click', function() {
+    this.classList.remove('show');
+  });
+
+  // ===== 管理员登录（search.html） =====
+  function applyAdminMode() {
+    var navXcpp = document.getElementById('navXcpp');
+    if (isAdmin()) {
+      var entry = document.getElementById('adminEntry');
+      var wrap = document.getElementById('adminEntryWrap');
+      if (entry) {
+        entry.classList.add('logged-in');
+        entry.title = '管理员已登录 · 点击管理';
+      }
+      if (wrap) wrap.classList.add('logged-in');
+      if (navXcpp) navXcpp.style.display = 'block';
+    } else {
+      if (navXcpp) navXcpp.style.display = 'none';
+    }
+  }
+  applyAdminMode();
+
+  document.getElementById('adminEntry').addEventListener('click', function() {
+    var overlay = document.getElementById('adminOverlay');
+    document.getElementById('adminError').classList.remove('show');
+    if (isAdmin()) {
+      document.getElementById('adminLoginBox').style.display = 'none';
+      document.getElementById('adminInfoBox').style.display = 'block';
+      overlay.classList.add('show');
+    } else {
+      document.getElementById('adminLoginBox').style.display = 'block';
+      document.getElementById('adminInfoBox').style.display = 'none';
+      overlay.classList.add('show');
+      document.getElementById('adminUser').focus();
+    }
+  });
+
+  document.getElementById('adminOverlay').addEventListener('click', function(e) {
+    if (e.target === this) this.classList.remove('show');
+  });
+
+  function submitAdminLogin() {
+    var u = document.getElementById('adminUser').value.trim();
+    var p = document.getElementById('adminPass').value.trim();
+    if (u === 'guanliyuan' && p === '19802307') {
+      localStorage.setItem('xc_admin', '1');
+      applyAdminMode();
+      document.getElementById('adminOverlay').classList.remove('show');
+      showAdminToast('登录成功');
+    } else {
+      document.getElementById('adminError').classList.add('show');
+    }
+  }
+
+  function logoutAdmin() {
+    localStorage.removeItem('xc_admin');
+    var entry = document.getElementById('adminEntry');
+    var wrap = document.getElementById('adminEntryWrap');
+    if (entry) {
+      entry.classList.remove('logged-in');
+      entry.title = '管理员登录';
+    }
+    if (wrap) wrap.classList.remove('logged-in');
+    var navXcpp = document.getElementById('navXcpp');
+    if (navXcpp) navXcpp.style.display = 'none';
+    document.getElementById('adminOverlay').classList.remove('show');
+  }
+
+  document.getElementById('adminPass').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') submitAdminLogin();
+  });
+
+  var _xcppHref = '';
+  function checkXcppEntry(href) {
+    // 无论是否管理员，每次进入仙女档案都需输入密码
+    _xcppHref = href;
+    document.getElementById('xcppError').classList.remove('show');
+    document.getElementById('xcppPass').value = '';
+    document.getElementById('xcppOverlay').classList.add('show');
+    setTimeout(function() { document.getElementById('xcppPass').focus(); }, 100);
+    return false;
+  }
+
+  document.getElementById('xcppOverlay').addEventListener('click', function(e) {
+    if (e.target === this) this.classList.remove('show');
+  });
+
+  function submitXcppPass() {
+    if (document.getElementById('xcppPass').value.trim() === '89771') {
+      document.getElementById('xcppOverlay').classList.remove('show');
+      location.href = _xcppHref || 'xcpp.html';
+    } else {
+      document.getElementById('xcppError').classList.add('show');
+    }
+  }
+
+  document.getElementById('xcppPass').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') submitXcppPass();
+  });
+</script>
+
+<!-- 管理员登录弹窗 -->
+<div class="admin-overlay" id="adminOverlay">
+  <div class="admin-box" id="adminLoginBox">
+    <h3>管理员登录</h3>
+    <input type="text" id="adminUser" placeholder="账号" autocomplete="off">
+    <input type="password" id="adminPass" placeholder="密码" autocomplete="off">
+    <div class="admin-error" id="adminError">账号或密码不正确</div>
+    <button class="admin-btn" onclick="submitAdminLogin()">登 录</button>
+  </div>
+  <div class="admin-box admin-info-box" id="adminInfoBox" style="display:none">
+    <h3>管理员</h3>
+    <div class="admin-status">✓ 已登录</div>
+    <div class="admin-sub">当前为管理员模式，可查看隐藏内容</div>
+    <button class="admin-btn" onclick="logoutAdmin()">退出登录</button>
+  </div>
+</div>
+
+<!-- 仙女档案密码弹窗 -->
+<div class="admin-overlay" id="xcppOverlay">
+  <div class="admin-box">
+    <h3>仙女档案 · 访问验证</h3>
+    <input type="password" id="xcppPass" placeholder="请输入密码" autocomplete="off">
+    <div class="admin-error" id="xcppError">密码不正确</div>
+    <button class="admin-btn" onclick="submitXcppPass()">进 入</button>
+  </div>
+</div>
+
+<!-- 管理员操作 toast 提示 -->
+<div class="admin-toast" id="adminToast"></div>
+</body>
+</html>

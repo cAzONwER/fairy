@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1080">
+<title>柳小小 · 仙女村人物</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%23e9ddcc'/%3E%3Ctext x='32' y='42' font-size='26' text-anchor='middle' fill='%23a5432f' font-family='serif'%3E仙%3C/text%3E%3C/svg%3E">
+<style>
+  :root {
+    --paper: #e9ddcc;
+    --paper-light: #f3ead9;
+    --ink: #43382c;
+    --ink-dim: #7a6a58;
+    --ink-faint: #a5977f;
+    --accent: #a5432f;
+    --line: rgba(90, 70, 50, .25);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: "KaiTi", "STKaiti", "SimSun", "Songti SC", serif;
+    color: var(--ink);
+    background-color: var(--paper);
+    background-image: url("images/paper.jpg");
+    background-size: 380px;
+    min-width: 1080px;
+    min-height: 100vh;
+    overflow-x: auto;
+  }
+
+  .page {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 0 32px 60px;
+  }
+
+  /* ===== 隐藏式左侧导航栏 ===== */
+  .nav-trigger {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 12px;
+    height: 100vh;
+    z-index: 20;
+  }
+
+  .nav-trigger:hover .side-nav,
+  .side-nav:hover {
+    transform: translateX(0);
+  }
+
+  .side-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 210px;
+    height: 100vh;
+    background: var(--paper-light);
+    border-right: 1px solid var(--line);
+    box-shadow: 4px 0 18px rgba(70, 50, 30, .15);
+    transform: translateX(-100%);
+    transition: transform .25s ease;
+    z-index: 21;
+    padding: 28px 0;
+    overflow-y: auto;
+  }
+
+  .side-nav::after {
+    content: "‹";
+    position: fixed;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 22px;
+    color: var(--ink-faint);
+    pointer-events: none;
+  }
+
+  .nav-head {
+    text-align: center;
+    padding-bottom: 18px;
+    margin-bottom: 14px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .nav-head .nav-logo {
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+    margin: 0 auto 10px;
+    border: 1px solid var(--line);
+  }
+
+  .nav-head .nav-title {
+    font-size: 16px;
+    letter-spacing: 6px;
+    text-indent: 6px;
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  .nav-item {
+    display: block;
+    padding: 13px 28px;
+    font-size: 15px;
+    letter-spacing: 3px;
+    text-indent: 3px;
+    color: var(--ink-dim);
+    text-decoration: none;
+    cursor: pointer;
+    user-select: none;
+    border-left: 3px solid transparent;
+    transition: background .15s, color .15s, border-color .15s;
+  }
+
+  .nav-item:hover {
+    background: rgba(165, 67, 47, .08);
+    color: var(--accent);
+  }
+
+  /* ===== 顶部栏 ===== */
+  .top-bar {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 18px 32px 0;
+    display: flex;
+    justify-content: flex-start;
+  }
+
+  .back-home {
+    padding: 8px 18px;
+    font-size: 14px;
+    letter-spacing: 3px;
+    text-indent: 3px;
+    color: var(--ink-dim);
+    text-decoration: none;
+    border: 1px solid var(--line);
+    background: var(--paper-light);
+    transition: color .15s, border-color .15s;
+  }
+
+  .back-home:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+
+  /* ===== 标题区 ===== */
+  .masthead {
+    text-align: center;
+    padding: 30px 0 24px;
+  }
+
+  .site-title {
+    font-size: 48px;
+    letter-spacing: 20px;
+    text-indent: 20px;
+    color: var(--ink);
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .site-sub {
+    margin-top: 14px;
+    font-size: 15px;
+    letter-spacing: 10px;
+    text-indent: 10px;
+    color: var(--ink-dim);
+  }
+
+  /* ===== 人物详情 ===== */
+  .person-wrap {
+    border: 1px solid var(--line);
+    background: var(--paper-light);
+    box-shadow: 0 4px 18px rgba(70, 50, 30, .12);
+    padding: 44px 56px;
+  }
+
+  /* 人物信息卡 */
+  .person-info {
+    margin-bottom: 32px;
+    padding-bottom: 18px;
+    border-bottom: 1px dashed var(--line);
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 10px 24px;
+    font-size: 14px;
+    letter-spacing: 1.5px;
+  }
+
+  .person-info .info-label {
+    color: var(--ink-faint);
+    white-space: nowrap;
+  }
+
+  .person-info .info-value {
+    color: var(--ink);
+  }
+
+  /* 左文右图布局 */
+  .person-layout {
+    display: flex;
+    gap: 48px;
+    align-items: flex-start;
+  }
+
+  .person-text {
+    flex: 1;
+    min-width: 0;
+    position: relative;
+  }
+
+  .person-text p {
+    font-size: 17.5px;
+    line-height: 2.2;
+    letter-spacing: 1.5px;
+    text-indent: 2em;
+    margin-bottom: 18px;
+    color: var(--ink);
+  }
+
+  .person-text p:last-child { margin-bottom: 0; }
+
+  .person-text strong {
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  /* 隐藏线索：绝对定位悬浮在信息卡与正文之间的天然空隙里，不占任何额外空间 */
+  .person-text p.secret-line {
+    position: absolute;
+    top: -28px;
+    left: 0;
+    right: 0;
+    margin: 0;
+    color: transparent;
+    cursor: text;
+    user-select: text;
+  }
+
+  .person-text p.secret-line::selection {
+    color: var(--accent);
+    background: rgba(165, 67, 47, .14);
+  }
+
+  /* 右侧图列：肖像与书影，普通排版不随窗口固定 */
+  .person-figures {
+    width: 300px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 26px;
+  }
+
+  .person-figure {
+    border: 1px solid var(--line);
+    padding: 10px;
+    background: var(--paper);
+    box-shadow: 0 6px 22px rgba(70, 50, 30, .2);
+  }
+
+  .person-figure img {
+    width: 100%;
+    display: block;
+  }
+
+  .person-figure img.portrait {
+    filter: grayscale(.5) contrast(1.05);
+  }
+
+  .person-figure figcaption {
+    text-align: center;
+    font-size: 13px;
+    color: var(--ink-faint);
+    letter-spacing: 6px;
+    text-indent: 6px;
+    padding-top: 10px;
+  }
+
+  footer {
+    text-align: center;
+    padding: 40px 0 0;
+    font-size: 13px;
+    color: var(--ink-faint);
+    letter-spacing: 3px;
+  }
+</style>
+</head>
+<body>
+
+<!-- 隐藏式导航栏 -->
+<div class="nav-trigger">
+  <nav class="side-nav">
+    <div class="nav-head">
+      <img class="nav-logo" src="images/logo.jpeg" alt="仙女村图腾">
+      <div class="nav-title">仙女村</div>
+    </div>
+    <a class="nav-item" href="index.html#folk">体验风土人情</a>
+    <a class="nav-item" href="index.html#story">仙女的故事</a>
+    <a class="nav-item" href="index.html#show">仙女表演</a>
+    <a class="nav-item" href="news.html">近期新闻</a>
+  </nav>
+</div>
+
+<div class="page">
+
+  <div class="top-bar">
+    <a class="back-home" href="index.html">← 返回首页</a>
+  </div>
+
+  <header class="masthead">
+    <h1 class="site-title">柳 小 小</h1>
+    <div class="site-sub">仙 女 村 人 物</div>
+  </header>
+
+  <div class="person-wrap">
+
+    <div class="person-info">
+      <div class="info-label">姓　　名</div><div class="info-value">柳小小</div>
+      <div class="info-label">出生年份</div><div class="info-value">1914 年</div>
+      <div class="info-label">籍　　贯</div><div class="info-value">仙女村</div>
+      <div class="info-label">身　　份</div><div class="info-value">柳氏遗孀</div>
+    </div>
+
+    <div class="person-layout">
+      <div class="person-text">
+        <p class="secret-line">https://cazonwer.github.io/fairy/jiyi/</p>
+        <p>柳小小，容貌秀美，右侧嘴角生有一颗标志性的痣，天资聪慧，性情灵秀，十分讨人喜爱。虽有不少人倾心追求，她却始终不为所动。</p>
+        <p>她偶然拾得《抱朴子・论仙》一书，熟读至能够倒背如流，平日常引书中古文谈吐，借以自持。</p>
+        <p>柳小小幼年丧父，后跟随母亲改嫁，母亲于改嫁后不久因病去世。</p>
+        <p>柳小小于 1934 年失踪，失踪时仅留下一张字条，上书：<strong>"目察百步，不能了了，而欲以所见为有，所不见为无，则天下之所无者，亦必多矣。"</strong></p>
+      </div>
+
+      <div class="person-figures">
+        <figure class="person-figure">
+          <img class="portrait" src="images/lxxz.jpg" alt="柳小小留影">
+          <figcaption>柳小小留影</figcaption>
+        </figure>
+        <figure class="person-figure">
+          <img src="images/book.webp" alt="抱朴子论仙书影">
+          <figcaption>《抱朴子・论仙》书影</figcaption>
+        </figure>
+      </div>
+    </div>
+
+  </div>
+
+  <footer>
+    仙女村 · 欢迎您来
+  </footer>
+
+</div>
+
+</body>
+</html>
