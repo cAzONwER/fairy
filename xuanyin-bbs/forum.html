@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1080">
+<title>宣银论坛 - 宣银大学</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%23101828'/%3E%3Ccircle cx='32' cy='32' r='26' fill='none' stroke='%23c8d3e8' stroke-width='2'/%3E%3Ctext x='32' y='42' font-size='26' text-anchor='middle' fill='%23c8d3e8' font-family='serif'%3E宣%3C/text%3E%3C/svg%3E">
+<style>
+  :root {
+    --ink: #0d1420;
+    --ink-2: #101a2c;
+    --card: rgba(16, 26, 44, .82);
+    --line: rgba(160, 180, 220, .16);
+    --text: #dbe4f3;
+    --text-dim: #8fa0bd;
+    --text-faint: #5c6c8a;
+    --accent: #c8d3e8;
+    --accent-dim: #9fb0cc;
+    --like: #e08a8a;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans SC", sans-serif;
+    background:
+      radial-gradient(ellipse 90% 55% at 50% -8%, rgba(90, 115, 165, .22), transparent 60%),
+      linear-gradient(180deg, var(--ink-2), var(--ink) 55%);
+    color: var(--text);
+    min-width: 1080px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: auto;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size: 56px 56px;
+    opacity: .35;
+    pointer-events: none;
+    mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, #000 30%, transparent 100%);
+  }
+
+  /* ===== 顶部导航 ===== */
+  header {
+    position: relative;
+    z-index: 2;
+    border-bottom: 1px solid var(--line);
+    background: rgba(13, 20, 32, .75);
+    backdrop-filter: blur(6px);
+  }
+
+  .header-inner {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 0 24px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .site-mark {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    color: var(--text);
+  }
+
+  .site-mark svg { width: 40px; height: 40px; }
+
+  .site-name {
+    font-family: "SimSun", "Songti SC", serif;
+    font-size: 20px;
+    letter-spacing: 2px;
+  }
+
+  .site-sub {
+    font-size: 11px;
+    color: var(--text-faint);
+    letter-spacing: 3px;
+    margin-top: 2px;
+  }
+
+  .search-box {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+  }
+
+  .search-box input {
+    width: 240px;
+    height: 34px;
+    background: rgba(13, 20, 32, .8);
+    border: 1px solid var(--line);
+    border-right: none;
+    color: var(--text);
+    padding: 0 12px;
+    font-size: 13px;
+    letter-spacing: 1px;
+    outline: none;
+    transition: border-color .2s;
+  }
+
+  .search-box input::placeholder { color: var(--text-faint); }
+  .search-box input:focus { border-color: var(--accent-dim); }
+
+  .search-box button {
+    height: 34px;
+    padding: 0 16px;
+    background: rgba(200, 211, 232, .12);
+    border: 1px solid var(--line);
+    color: var(--accent);
+    font-size: 13px;
+    letter-spacing: 2px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background .2s;
+  }
+
+  .search-box button:hover { background: rgba(200, 211, 232, .2); }
+
+  /* ===== 主体 ===== */
+  main {
+    position: relative;
+    z-index: 2;
+    flex: 1;
+    width: 100%;
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 28px 24px 72px;
+  }
+
+  .tab-bar {
+    display: flex;
+    gap: 6px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .tab {
+    padding: 12px 30px;
+    font-size: 15px;
+    letter-spacing: 3px;
+    color: var(--text-dim);
+    cursor: pointer;
+    user-select: none;
+    border: 1px solid transparent;
+    border-bottom: none;
+    transition: color .2s, background .2s;
+    font-family: "SimSun", "Songti SC", serif;
+  }
+
+  .tab:hover { color: var(--text); }
+
+  .tab.active {
+    color: var(--accent);
+    background: var(--card);
+    border-color: var(--line);
+    border-radius: 4px 4px 0 0;
+    position: relative;
+  }
+
+  .tab.active::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: -1px;
+    height: 1px;
+    background: var(--ink);
+  }
+
+  .tab-panel {
+    display: none;
+    border: 1px solid var(--line);
+    border-top: none;
+    background: var(--card);
+    backdrop-filter: blur(8px);
+    padding: 28px;
+  }
+
+  .tab-panel.active { display: block; }
+
+  /* ===== 帖子流 ===== */
+  .post {
+    border: 1px solid var(--line);
+    background: rgba(13, 20, 32, .55);
+    padding: 20px 22px;
+    margin-bottom: 18px;
+  }
+
+  .post:last-child { margin-bottom: 0; }
+
+  .post-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+
+  .avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 17px;
+    color: #101a2c;
+    font-weight: 600;
+    border: 1px solid rgba(200, 211, 232, .25);
+    overflow: hidden;
+  }
+
+  .avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+  .post-user {
+    font-size: 14px;
+    color: var(--text);
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .badge {
+    font-size: 10px;
+    letter-spacing: 1px;
+    padding: 1px 7px;
+    border-radius: 3px;
+    border: 1px solid rgba(224, 170, 170, .4);
+    color: #e0aaaa;
+  }
+
+  .post-meta {
+    font-size: 11.5px;
+    color: var(--text-faint);
+    margin-top: 4px;
+    letter-spacing: 1px;
+  }
+
+  .post-body {
+    font-size: 14.5px;
+    line-height: 1.9;
+    color: var(--text);
+    letter-spacing: .5px;
+    margin-bottom: 14px;
+  }
+
+  .post-imgs {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+
+  .post-imgs img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    display: block;
+    cursor: zoom-in;
+    border: 1px solid var(--line);
+    filter: saturate(.92);
+    transition: filter .2s;
+  }
+
+  .post-imgs img:hover { filter: saturate(1.05); }
+
+  .post-actions {
+    display: flex;
+    gap: 36px;
+    border-top: 1px solid var(--line);
+    padding-top: 12px;
+  }
+
+  .act {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12.5px;
+    color: var(--text-faint);
+    cursor: pointer;
+    user-select: none;
+    letter-spacing: 1px;
+    transition: color .15s;
+  }
+
+  .act:hover { color: var(--text-dim); }
+
+  .act .ico { font-size: 14px; }
+
+  .act.liked { color: var(--like); }
+
+  /* 评论 */
+  .comments {
+    margin-top: 14px;
+    border-top: 1px dashed var(--line);
+    padding-top: 6px;
+  }
+
+  .comment {
+    display: flex;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px dashed rgba(160, 180, 220, .08);
+  }
+
+  .comment:last-child { border-bottom: none; }
+
+  .comment .avatar { width: 30px; height: 30px; font-size: 13px; }
+
+  .comment-main { flex: 1; }
+
+  .comment-user {
+    font-size: 12px;
+    color: var(--accent-dim);
+    letter-spacing: 1px;
+  }
+
+  .comment-text {
+    font-size: 13.5px;
+    color: var(--text-dim);
+    margin-top: 4px;
+    line-height: 1.7;
+    letter-spacing: .5px;
+  }
+
+  .comment-meta {
+    font-size: 11px;
+    color: var(--text-faint);
+    margin-top: 4px;
+    letter-spacing: 1px;
+  }
+
+  /* ===== 公告列表 ===== */
+  .anno {
+    border: 1px solid var(--line);
+    background: rgba(13, 20, 32, .55);
+    padding: 18px 22px;
+    margin-bottom: 14px;
+  }
+
+  .anno:last-child { margin-bottom: 0; }
+
+  .anno.pinned {
+    border-left: 3px solid var(--accent-dim);
+    background: rgba(200, 211, 232, .06);
+  }
+
+  .anno-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .anno-title {
+    font-size: 15px;
+    color: var(--text);
+    letter-spacing: 1px;
+    font-weight: 600;
+  }
+
+  .pin-tag {
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--ink);
+    background: var(--accent);
+    padding: 1px 7px;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  .anno-body {
+    font-size: 13.5px;
+    color: var(--text-dim);
+    line-height: 1.9;
+    letter-spacing: .5px;
+  }
+
+  .anno-body .url {
+    color: var(--accent);
+    border-bottom: 1px dashed rgba(200, 211, 232, .4);
+    padding-bottom: 1px;
+  }
+
+  .anno-foot {
+    margin-top: 10px;
+    font-size: 11.5px;
+    color: var(--text-faint);
+    letter-spacing: 1px;
+  }
+
+  /* ===== 我的 ===== */
+  .profile-head {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 24px;
+  }
+
+  .profile-head .avatar {
+    width: 72px;
+    height: 72px;
+    font-size: 30px;
+  }
+
+  .profile-name {
+    font-size: 19px;
+    letter-spacing: 2px;
+    color: var(--text);
+  }
+
+  .profile-id {
+    font-size: 12px;
+    color: var(--text-faint);
+    letter-spacing: 1px;
+    margin-top: 6px;
+  }
+
+  .profile-sign {
+    font-size: 12.5px;
+    color: var(--text-dim);
+    margin-top: 8px;
+    letter-spacing: 1px;
+  }
+
+  .profile-stats {
+    display: flex;
+    gap: 44px;
+    margin-left: auto;
+    text-align: center;
+  }
+
+  .stat-num {
+    font-size: 22px;
+    color: var(--accent);
+    font-family: "SimSun", serif;
+  }
+
+  .stat-label {
+    font-size: 11.5px;
+    color: var(--text-faint);
+    letter-spacing: 2px;
+    margin-top: 4px;
+  }
+
+  .menu-list { margin-top: 8px; }
+
+  /* 我的帖子子视图 */
+  .mine-sub { display: none; }
+  .mine-sub.show { display: block; }
+  .sub-head {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin: 4px 0 16px;
+  }
+  .sub-back {
+    color: var(--text-faint);
+    font-size: 13px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    user-select: none;
+    transition: color .15s;
+  }
+  .sub-back:hover { color: var(--text); }
+  .sub-title { font-size: 15px; letter-spacing: 3px; color: var(--text-dim); }
+
+  .menu-item {
+    display: flex;
+    align-items: center;
+    padding: 16px 6px;
+    font-size: 14px;
+    letter-spacing: 2px;
+    color: var(--text-dim);
+    border-bottom: 1px solid rgba(160, 180, 220, .08);
+    cursor: pointer;
+    transition: color .15s, background .15s;
+    user-select: none;
+  }
+
+  .menu-item:hover { color: var(--text); background: rgba(200, 211, 232, .03); }
+
+  .menu-item .arr { margin-left: auto; color: var(--text-faint); }
+
+  .menu-item.danger { color: var(--like); }
+
+  /* ===== 浮层 ===== */
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    background: rgba(5, 8, 14, .92);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    cursor: zoom-out;
+  }
+
+  .lightbox.show { display: flex; }
+
+  .lightbox img {
+    max-width: 86vw;
+    max-height: 88vh;
+    border: 1px solid var(--line);
+    box-shadow: 0 30px 80px rgba(0, 0, 0, .6);
+  }
+
+  .toast {
+    position: fixed;
+    left: 50%;
+    bottom: 48px;
+    transform: translateX(-50%) translateY(10px);
+    background: #1a2740;
+    border: 1px solid rgba(200, 211, 232, .35);
+    color: var(--text);
+    font-size: 13px;
+    letter-spacing: 1px;
+    padding: 10px 22px;
+    border-radius: 4px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, .5);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .25s, transform .25s;
+    z-index: 110;
+  }
+
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  footer {
+    position: relative;
+    z-index: 2;
+    border-top: 1px solid var(--line);
+    padding: 18px 24px 22px;
+    text-align: center;
+    font-size: 11.5px;
+    color: var(--text-faint);
+    letter-spacing: 1px;
+    line-height: 2;
+  }
+
+  footer .sep { margin: 0 10px; opacity: .4; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a class="site-mark" href="#">
+      <svg viewBox="0 0 64 64" aria-hidden="true">
+        <circle cx="32" cy="32" r="30" fill="none" stroke="#c8d3e8" stroke-width="1.5" opacity=".8"/>
+        <circle cx="32" cy="32" r="25.5" fill="none" stroke="#c8d3e8" stroke-width=".75" opacity=".5"/>
+        <text x="32" y="41" font-size="24" text-anchor="middle" fill="#c8d3e8" font-family="SimSun, serif">宣</text>
+      </svg>
+      <span>
+        <div class="site-name">宣银论坛</div>
+        <div class="site-sub">XUANYIN BBS</div>
+      </span>
+    </a>
+    <form class="search-box" id="searchForm">
+      <input type="text" id="searchInput" placeholder="搜索帖子 / 用户…" spellcheck="false">
+      <button type="submit">搜索</button>
+    </form>
+  </div>
+</header>
+
+<main>
+  <div class="tab-bar">
+    <div class="tab active" data-tab="discover">发现</div>
+    <div class="tab" data-tab="notice">公告</div>
+    <div class="tab" data-tab="mine">我的</div>
+  </div>
+
+  <!-- ============ 发现 ============ -->
+  <div class="tab-panel active" id="panel-discover">
+
+    <!-- 帖子：萌香小金鱼 -->
+    <article class="post">
+      <div class="post-head">
+        <div class="avatar"><img src="images/jinyu.gif" alt="萌香小金鱼的头像"></div>
+        <div>
+          <div class="post-user">萌香小金鱼 <span class="badge">人气</span></div>
+          <div class="post-meta">10-09 23:12 · 灌水区</div>
+        </div>
+      </div>
+      <div class="post-body">怎得仙女青睐？</div>
+      <div class="post-imgs">
+        <img src="images/xiannv-1.png" alt="配图一">
+        <img src="images/xiannv-2.png" alt="配图二">
+        <img src="images/xiannv-3.png" alt="配图三">
+      </div>
+      <div class="post-actions">
+        <span class="act act-like" data-count="128"><span class="ico">♡</span><span class="num">128</span></span>
+        <span class="act act-comment"><span class="ico">✎</span><span class="num">5</span></span>
+        <span class="act act-repost" data-count="23"><span class="ico">⇄</span><span class="num">23</span></span>
+      </div>
+      <div class="comments">
+        <div class="comment">
+          <div class="avatar" style="background:#8fa8c8">青</div>
+          <div class="comment-main">
+            <div class="comment-user">青梧听雨</div>
+            <div class="comment-text">学姐更是仙女下凡呀！</div>
+            <div class="comment-meta">10-09 23:20</div>
+          </div>
+        </div>
+        <div class="comment">
+          <div class="avatar" style="background:#c8b8d8">奶</div>
+          <div class="comment-main">
+            <div class="comment-user">奶糖不加糖</div>
+            <div class="comment-text">学姐这个美萌~</div>
+            <div class="comment-meta">10-09 23:26</div>
+          </div>
+        </div>
+        <div class="comment">
+          <div class="avatar" style="background:#a8c8b8">早</div>
+          <div class="comment-main">
+            <div class="comment-user">早八不迟到</div>
+            <div class="comment-text">这是仙女村吗？</div>
+            <div class="comment-meta">10-09 23:31</div>
+          </div>
+        </div>
+        <div class="comment">
+          <div class="avatar" style="background:#d8c8a8">图</div>
+          <div class="comment-main">
+            <div class="comment-user">图书馆五楼靠窗</div>
+            <div class="comment-text">啥时候去玩了？</div>
+            <div class="comment-meta">10-10 00:02</div>
+          </div>
+        </div>
+        <div class="comment">
+          <div class="avatar" style="background:#c8a8a8">一</div>
+          <div class="comment-main">
+            <div class="comment-user">一勺月光</div>
+            <div class="comment-text">美丽学姐我亲</div>
+            <div class="comment-meta">10-10 00:15</div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- 帖子：楼顶半夜练歌 -->
+    <article class="post">
+      <div class="post-head">
+        <div class="avatar" style="background:#a8c8b8">早</div>
+        <div>
+          <div class="post-user">早八不迟到</div>
+          <div class="post-meta">10-11 02:33 · 灌水区</div>
+        </div>
+      </div>
+      <div class="post-body">谁半夜在学三舍楼顶唱“怒放”啊？练唱能不能挑个阳间时，非要吵别人睡觉是不是？？？</div>
+      <div class="post-actions">
+        <span class="act act-like" data-count="34"><span class="ico">♡</span><span class="num">34</span></span>
+        <span class="act act-comment"><span class="ico">✎</span><span class="num">4</span></span>
+        <span class="act act-repost" data-count="6"><span class="ico">⇄</span><span class="num">6</span></span>
+      </div>
+      <div class="comments">
+        <div class="comment">
+          <div class="avatar" style="background:#c8a8a8">一</div>
+          <div class="comment-main">
+            <div class="comment-user">一勺月光</div>
+            <div class="comment-text">难听的要命。。。。</div>
+            <div class="comment-meta">10-11 02:35</div>
+          </div>
+        </div>
+        <div class="comment">
+          <div class="avatar" style="background:#d8b8a8">二</div>
+          <div class="comment-main">
+            <div class="comment-user">二食堂干饭王</div>
+            <div class="comment-text">我也听到了，好大声</div>
+            <div class="comment-meta">10-11 02:41</div>
+          </div>
+        </div>
+        <div class="comment">
+          <div class="avatar" style="background:#d8c8a8">图</div>
+          <div class="comment-main">
+            <div class="comment-user">图书馆五楼靠窗</div>
+            <div class="comment-text">我都睡着了给我吵醒了</div>
+            <div class="comment-meta">10-11 02:47</div>
+          </div>
+        </div>
+        <div class="comment">
+          <div class="avatar" style="background:#a8c0d0">声</div>
+          <div class="comment-main">
+            <div class="comment-user">声浪练习生</div>
+            <div class="comment-text">不好意思，因为第二天就要参加比赛了，紧张得睡不着就起来练了，不好意思，我以为学三舍没人住</div>
+            <div class="comment-meta">10-11 09:12</div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- 帖子：琴房隔音 -->
+    <article class="post">
+      <div class="post-head">
+        <div class="avatar" style="background:#c8a8b8">起</div>
+        <div>
+          <div class="post-user">起床气很大</div>
+          <div class="post-meta">10-11 07:15 · 宿舍生活</div>
+        </div>
+      </div>
+      <div class="post-body">隔壁楼琴房能不能隔音一下，天天早上七点准时开练，我感谢她但我真的会谢。</div>
+      <div class="post-actions">
+        <span class="act act-like" data-count="47"><span class="ico">♡</span><span class="num">47</span></span>
+        <span class="act act-comment"><span class="ico">✎</span><span class="num">15</span></span>
+        <span class="act act-repost" data-count="1"><span class="ico">⇄</span><span class="num">1</span></span>
+      </div>
+    </article>
+
+    <!-- 帖子：选课系统 -->
+    <article class="post">
+      <div class="post-head">
+        <div class="avatar" style="background:#b8c8a8">选</div>
+        <div>
+          <div class="post-user">选课难民</div>
+          <div class="post-meta">10-11 09:58 · 校务交流</div>
+        </div>
+      </div>
+      <div class="post-body">选课系统又崩了，蹲了半小时一点进去全是“人数已满”，服了。</div>
+      <div class="post-actions">
+        <span class="act act-like" data-count="73"><span class="ico">♡</span><span class="num">73</span></span>
+        <span class="act act-comment"><span class="ico">✎</span><span class="num">21</span></span>
+        <span class="act act-repost" data-count="4"><span class="ico">⇄</span><span class="num">4</span></span>
+      </div>
+    </article>
+
+    <!-- 帖子：邮箱初始密码 -->
+    <article class="post">
+      <div class="post-head">
+        <div class="avatar" style="background:#d0c8a8">萌</div>
+        <div>
+          <div class="post-user">萌新报到</div>
+          <div class="post-meta">10-11 21:47 · 校务交流</div>
+        </div>
+      </div>
+      <div class="post-body">邮箱网站还能用吗？初始账密是啥？</div>
+      <div class="post-actions">
+        <span class="act act-like" data-count="12"><span class="ico">♡</span><span class="num">12</span></span>
+        <span class="act act-comment"><span class="ico">✎</span><span class="num">2</span></span>
+        <span class="act act-repost" data-count="0"><span class="ico">⇄</span><span class="num">0</span></span>
+      </div>
+      <div class="comments">
+        <div class="comment">
+          <div class="avatar" style="background:#b8a8c8">百</div>
+          <div class="comment-main">
+            <div class="comment-user">校园百晓生</div>
+            <div class="comment-text">账号一般是出生的日期，密码要找导员要，一般是乱码，最好登进去自己改一个</div>
+            <div class="comment-meta">10-11 21:55</div>
+          </div>
+        </div>
+        <div class="comment">
+          <div class="avatar" style="background:#d8b8a8">二</div>
+          <div class="comment-main">
+            <div class="comment-user">二食堂干饭王</div>
+            <div class="comment-text">谁家初始密码是雷霆乱码啊。。。</div>
+            <div class="comment-meta">10-11 22:03</div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- 帖子：失物招领 -->
+    <article class="post">
+      <div class="post-head">
+        <div class="avatar" style="background:#a8b0b8">博</div>
+        <div>
+          <div class="post-user">博雅楼值班员</div>
+          <div class="post-meta">10-11 22:15 · 失物招领</div>
+        </div>
+      </div>
+      <div class="post-body">林和友，你身份证放博雅楼大厅的桌子上了，记得拿</div>
+      <div class="post-actions">
+        <span class="act act-like" data-count="6"><span class="ico">♡</span><span class="num">6</span></span>
+        <span class="act act-comment"><span class="ico">✎</span><span class="num">0</span></span>
+        <span class="act act-repost" data-count="0"><span class="ico">⇄</span><span class="num">0</span></span>
+      </div>
+    </article>
+
+    <!-- 帖子：食堂涨价 -->
+    <article class="post">
+      <div class="post-head">
+        <div class="avatar" style="background:#d8b8a8">二</div>
+        <div>
+          <div class="post-user">二食堂干饭王</div>
+          <div class="post-meta">10-10 12:31 · 美食区</div>
+        </div>
+      </div>
+      <div class="post-body">三楼麻辣香锅又涨价了，米饭还开始限量，兄弟们开麦！</div>
+      <div class="post-actions">
+        <span class="act act-like" data-count="56"><span class="ico">♡</span><span class="num">56</span></span>
+        <span class="act act-comment"><span class="ico">✎</span><span class="num">12</span></span>
+        <span class="act act-repost" data-count="3"><span class="ico">⇄</span><span class="num">3</span></span>
+      </div>
+    </article>
+
+    <!-- 帖子：图书馆占座 -->
+    <article class="post">
+      <div class="post-head">
+        <div class="avatar" style="background:#d8c8a8">图</div>
+        <div>
+          <div class="post-user">图书馆五楼靠窗</div>
+          <div class="post-meta">10-10 15:08 · 学习区</div>
+        </div>
+      </div>
+      <div class="post-body">期末周图书馆四楼的占座堪比春运，建议学校开设候补功能。</div>
+      <div class="post-actions">
+        <span class="act act-like" data-count="89"><span class="ico">♡</span><span class="num">89</span></span>
+        <span class="act act-comment"><span class="ico">✎</span><span class="num">23</span></span>
+        <span class="act act-repost" data-count="2"><span class="ico">⇄</span><span class="num">2</span></span>
+      </div>
+    </article>
+
+    <!-- 帖子：收二手教材 -->
+    <article class="post">
+      <div class="post-head">
+        <div class="avatar" style="background:#b8a8c8">百</div>
+        <div>
+          <div class="post-user">校园百晓生</div>
+          <div class="post-meta">10-10 18:55 · 闲置交易</div>
+        </div>
+      </div>
+      <div class="post-body">收二手教材</div>
+      <div class="post-actions">
+        <span class="act act-like" data-count="21"><span class="ico">♡</span><span class="num">21</span></span>
+        <span class="act act-comment"><span class="ico">✎</span><span class="num">9</span></span>
+        <span class="act act-repost" data-count="1"><span class="ico">⇄</span><span class="num">1</span></span>
+      </div>
+    </article>
+  </div>
+
+  <!-- ============ 公告 ============ -->
+  <div class="tab-panel" id="panel-notice">
+
+    <div class="anno pinned">
+      <div class="anno-head">
+        <span class="pin-tag">置顶</span>
+        <span class="anno-title">校园网维修公告</span>
+      </div>
+      <div class="anno-body">
+        为提升校园网络服务质量，网络中心将于近期对全校网络设备进行检修。维修期间，校园网仅可访问网址形式为
+        <span class="url">https://cazonwer.github.io/******/</span>
+        的网站，其余外部站点将暂时无法访问。请各位师生合理安排上网计划，由此带来的不便敬请谅解。
+      </div>
+      <div class="anno-foot">宣银大学网络中心 · 10-09</div>
+    </div>
+
+    <div class="anno">
+      <div class="anno-head">
+        <span class="anno-title">关于举办第二十六届「宣银之秋」文艺晚会节目征集的通知</span>
+      </div>
+      <div class="anno-body">
+        为丰富校园文化生活，现面向全校师生征集晚会节目，形式不限（歌唱、舞蹈、戏曲、语言类节目均可），报名截止 10 月 20 日。
+      </div>
+      <div class="anno-foot">校团委 · 10-07</div>
+    </div>
+
+    <div class="anno">
+      <div class="anno-head">
+        <span class="anno-title">图书馆电子阅览室系统临时维护通知</span>
+      </div>
+      <div class="anno-body">
+        因系统升级，电子阅览室将于本周四 22:00 至次日 6:00 暂停服务，纸质阅览区正常开放。
+      </div>
+      <div class="anno-foot">图书馆 · 10-05</div>
+    </div>
+
+    <div class="anno">
+      <div class="anno-head">
+        <span class="anno-title">镜湖东侧步道围挡施工安全提示</span>
+      </div>
+      <div class="anno-body">
+        镜湖东侧步道因管道改造进行围挡施工，请师生夜间通行时注意绕行西侧道路，勿翻越围挡。
+      </div>
+      <div class="anno-foot">后勤保障处 · 10-03</div>
+    </div>
+
+    <div class="anno">
+      <div class="anno-head">
+        <span class="anno-title">论坛「失物招领」版块上线试运行公告</span>
+      </div>
+      <div class="anno-body">
+        应广大同学要求，「失物招领」版块即日起上线试运行，拾获与遗失物品信息请在该版块发布。
+      </div>
+      <div class="anno-foot">宣银论坛管理组 · 09-28</div>
+    </div>
+  </div>
+
+  <!-- ============ 我的 ============ -->
+  <div class="tab-panel" id="panel-mine">
+    <div class="profile-head">
+      <div class="avatar" style="background:#9fb0cc">周</div>
+      <div>
+        <div class="profile-name">周水</div>
+        <div class="profile-id">学号 32511016202</div>
+        <div class="profile-sign">这个人很懒，什么都没有留下</div>
+      </div>
+      <div class="profile-stats">
+        <div><div class="stat-num">1</div><div class="stat-label">帖子</div></div>
+        <div><div class="stat-num">0</div><div class="stat-label">评论</div></div>
+        <div><div class="stat-num">0</div><div class="stat-label">获赞</div></div>
+      </div>
+    </div>
+
+    <div class="menu-list" id="mineMenuList">
+      <div class="menu-item" data-menu="我的帖子">我的帖子<span class="arr">›</span></div>
+      <div class="menu-item" data-menu="我的收藏">我的收藏<span class="arr">›</span></div>
+      <div class="menu-item" data-menu="浏览历史">浏览历史<span class="arr">›</span></div>
+      <div class="menu-item" data-menu="个人资料">个人资料<span class="arr">›</span></div>
+      <div class="menu-item" data-menu="设置">设置<span class="arr">›</span></div>
+      <div class="menu-item danger" id="logoutBtn">退出登录<span class="arr">›</span></div>
+    </div>
+
+    <!-- 我的帖子子视图 -->
+    <div class="mine-sub" id="subMyPosts">
+      <div class="sub-head">
+        <span class="sub-back" id="myPostsBack">‹ 返回我的</span>
+        <span class="sub-title">我的帖子</span>
+      </div>
+
+      <article class="post">
+        <div class="post-head">
+          <div class="avatar" style="background:#9fb0cc">周</div>
+          <div>
+            <div class="post-user">周水</div>
+            <div class="post-meta">09-21 · 灌水区</div>
+          </div>
+        </div>
+        <div class="post-body">大学时期第一次在学校过生日，和舍友美美吃了一顿 : )</div>
+        <div class="post-actions">
+          <span class="act act-like" data-count="0"><span class="ico">♡</span><span class="num">0</span></span>
+          <span class="act act-comment"><span class="ico">✎</span><span class="num">0</span></span>
+          <span class="act act-repost" data-count="0"><span class="ico">⇄</span><span class="num">0</span></span>
+        </div>
+      </article>
+    </div>
+  </div>
+</main>
+
+<!-- 图片放大浮层 -->
+<div class="lightbox" id="lightbox"><img id="lightboxImg" src="" alt="预览"></div>
+<div class="toast" id="toast"></div>
+
+<footer>
+  <div>
+    宣银大学网络中心<span class="sep">|</span>宣银论坛管理组
+  </div>
+  <div>
+    建议使用 1024×768 以上分辨率浏览<span class="sep">|</span>自 1997 年以来的第 4,096,532 位访客
+  </div>
+</footer>
+
+<script>
+  // ===== 板块切换 =====
+  const tabs = document.querySelectorAll('.tab');
+  const panels = document.querySelectorAll('.tab-panel');
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => t.classList.remove('active'));
+      panels.forEach(p => p.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById('panel-' + tab.dataset.tab).classList.add('active');
+      if (tab.dataset.tab !== 'mine') closeMyPosts();
+    });
+  });
+
+  // ===== 提示浮层 =====
+  const toast = document.getElementById('toast');
+  let toastTimer = null;
+
+  function showToast(text) {
+    toast.textContent = text;
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove('show'), 1800);
+  }
+
+  // ===== 虚假点赞 / 转发 / 评论 =====
+  document.querySelectorAll('.act-like').forEach(el => {
+    el.addEventListener('click', () => {
+      const liked = el.classList.toggle('liked');
+      el.querySelector('.ico').textContent = liked ? '♥' : '♡';
+      const n = parseInt(el.dataset.count, 10);
+      el.querySelector('.num').textContent = liked ? n + 1 : n;
+    });
+  });
+
+  document.querySelectorAll('.act-repost').forEach(el => {
+    el.addEventListener('click', () => {
+      const n = parseInt(el.dataset.count, 10) + 1;
+      el.dataset.count = n;
+      el.querySelector('.num').textContent = n;
+      showToast('转发成功');
+    });
+  });
+
+  document.querySelectorAll('.act-comment').forEach(el => {
+    el.addEventListener('click', () => showToast('评论功能维护中'));
+  });
+
+  // ===== 图片放大 =====
+  const lightbox = document.getElementById('lightbox');
+  const lightboxImg = document.getElementById('lightboxImg');
+
+  document.querySelectorAll('.post-imgs img').forEach(img => {
+    img.addEventListener('click', () => {
+      lightboxImg.src = img.src;
+      lightbox.classList.add('show');
+    });
+  });
+
+  lightbox.addEventListener('click', () => lightbox.classList.remove('show'));
+
+  // ===== 搜索（占位） =====
+  const searchForm = document.getElementById('searchForm');
+  const searchInput = document.getElementById('searchInput');
+
+  searchForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const q = searchInput.value.trim();
+    if (!q) return;
+    alert('未找到与「' + q + '」相关的内容');
+    searchInput.value = '';
+  });
+
+  // ===== 我的 =====
+  const mineProfileHead = document.querySelector('#panel-mine .profile-head');
+  const mineMenuList = document.getElementById('mineMenuList');
+  const subMyPosts = document.getElementById('subMyPosts');
+
+  function closeMyPosts() {
+    subMyPosts.classList.remove('show');
+    mineProfileHead.style.display = '';
+    mineMenuList.style.display = '';
+  }
+
+  document.querySelectorAll('.menu-item[data-menu]').forEach(el => {
+    el.addEventListener('click', () => {
+      if (el.dataset.menu === '我的帖子') {
+        mineProfileHead.style.display = 'none';
+        mineMenuList.style.display = 'none';
+        subMyPosts.classList.add('show');
+        window.scrollTo(0, 0);
+        return;
+      }
+      showToast('「' + el.dataset.menu + '」功能建设中');
+    });
+  });
+
+  document.getElementById('myPostsBack').addEventListener('click', closeMyPosts);
+
+  document.getElementById('logoutBtn').addEventListener('click', () => {
+    location.href = 'index.html';
+  });
+</script>
+
+</body>
+</html>
