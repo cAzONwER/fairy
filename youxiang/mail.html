@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1080">
+<title>宣银邮箱</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='6' y='16' width='52' height='32' rx='3' fill='none' stroke='%237a6a58' stroke-width='2'/%3E%3Cpolyline points='6,18 32,36 58,18' fill='none' stroke='%237a6a58' stroke-width='2'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --bg: #FFF7D1;
+    --bg-deep: #F5EDB8;
+    --ink: #5A4E3A;
+    --ink-dim: #8C7E68;
+    --ink-faint: #B5A98F;
+    --accent: #C07F3C;
+    --accent-dim: #D49A5B;
+    --line: #E8DFA8;
+    --card: #FFFBE6;
+    --red: #C05040;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans SC", sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    min-width: 1080px;
+    min-height: 100vh;
+    overflow-x: auto;
+  }
+
+  /* ===== 顶部 ===== */
+  header {
+    border-bottom: 1px solid var(--line);
+    padding: 14px 48px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: var(--card);
+  }
+
+  .brand-logo {
+    width: 36px;
+    height: 36px;
+    border: 2px solid var(--ink-dim);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    color: var(--ink-dim);
+  }
+
+  .brand-name { font-size: 16px; font-weight: 700; letter-spacing: 2px; }
+  .brand-sub { font-size: 10px; color: var(--ink-faint); letter-spacing: 2px; margin-top: 1px; }
+
+  .user-info {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 12px;
+    color: var(--ink-dim);
+  }
+
+  .user-info .uid {
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .logout {
+    font-size: 12px;
+    color: var(--ink-dim);
+    text-decoration: none;
+    border: 1px solid var(--line);
+    padding: 4px 12px;
+    border-radius: 3px;
+    letter-spacing: 1px;
+  }
+
+  .logout:hover { color: var(--accent); border-color: var(--accent); }
+
+  /* ===== 主体布局 ===== */
+  main {
+    max-width: 1080px;
+    margin: 28px auto;
+    padding: 0 48px;
+    display: flex;
+    gap: 24px;
+  }
+
+  /* ===== 侧边栏 ===== */
+  .sidebar {
+    width: 180px;
+    flex-shrink: 0;
+  }
+
+  .nav-item {
+    display: block;
+    width: 100%;
+    padding: 12px 18px;
+    margin-bottom: 4px;
+    font-size: 14px;
+    letter-spacing: 2px;
+    color: var(--ink-dim);
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    cursor: pointer;
+    text-align: left;
+    font-family: inherit;
+    transition: background .15s, color .15s;
+  }
+
+  .nav-item:hover { background: var(--bg-deep); color: var(--ink); }
+
+  .nav-item.active {
+    background: var(--accent);
+    color: #FFF;
+    border-color: var(--accent);
+  }
+
+  .nav-item .badge {
+    float: right;
+    font-size: 11px;
+    background: var(--red);
+    color: #FFF;
+    padding: 1px 6px;
+    border-radius: 8px;
+    letter-spacing: 0;
+  }
+
+  .badge-draft {
+    font-size: 10px;
+    background: var(--bg-deep);
+    color: var(--text-dim);
+    padding: 1px 6px;
+    border-radius: 3px;
+    border: 1px solid var(--border);
+  }
+
+  /* ===== 面板区 ===== */
+  .panel {
+    flex: 1;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    min-height: 560px;
+    padding: 32px 36px;
+  }
+
+  .panel.hidden { display: none; }
+
+  /* ===== 写邮件面板 ===== */
+  .mail-form .row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 18px;
+    gap: 12px;
+  }
+
+  .mail-form .label {
+    width: 68px;
+    font-size: 13px;
+    color: var(--ink-dim);
+    letter-spacing: 1px;
+    flex-shrink: 0;
+  }
+
+  .mail-form .input,
+  .mail-form .textarea {
+    flex: 1;
+    padding: 10px 14px;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 14px;
+    color: var(--ink);
+    outline: none;
+    transition: border-color .15s, background .15s;
+    position: relative;
+  }
+
+  .mail-form .input:focus,
+  .mail-form .textarea:focus {
+    border-color: var(--accent-dim);
+    background: #FFF;
+  }
+
+  .mail-form .textarea {
+    min-height: 340px;
+    resize: none;
+    line-height: 1.8;
+  }
+
+  .mail-form .actions {
+    display: flex;
+    gap: 12px;
+    padding-top: 16px;
+    border-top: 1px solid var(--line);
+  }
+
+  .btn {
+    padding: 10px 28px;
+    border: none;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 14px;
+    letter-spacing: 3px;
+    cursor: pointer;
+    transition: background .15s;
+  }
+
+  .btn-primary { background: var(--accent); color: #FFF; }
+  .btn-primary:hover { background: var(--accent-dim); }
+  .btn-secondary { background: var(--bg-deep); color: var(--ink-dim); border: 1px solid var(--line); }
+  .btn-secondary:hover { background: var(--line); color: var(--ink); }
+
+  /* 提示气泡（点击输入框弹出） */
+  .hint-wrap {
+    flex: 1;
+    position: relative;
+  }
+
+  .hint-pop {
+    display: none;
+    position: absolute;
+    top: -8px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-100%);
+    background: var(--ink);
+    color: #FFF;
+    font-size: 12px;
+    padding: 8px 16px;
+    border-radius: 4px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    white-space: nowrap;
+    box-shadow: 0 4px 12px rgba(0,0,0,.2);
+    z-index: 10;
+  }
+
+  .hint-pop::after {
+    content: "";
+    position: absolute;
+    bottom: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: var(--ink);
+  }
+
+  .hint-pop.show { display: block; }
+  .hint-pop:hover { background: var(--accent); }
+
+  /* 内容区图片附件 */
+  .content-img {
+    max-width: 280px;
+    margin-top: 12px;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    display: block;
+    transition: opacity .15s;
+  }
+
+  .content-img:hover { opacity: .85; }
+
+  /* ===== 图片放大查看 ===== */
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    background: rgba(30, 24, 12, .78);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    cursor: zoom-out;
+  }
+
+  .lightbox.show { display: flex; }
+
+  .lightbox img {
+    max-width: 80vw;
+    max-height: 85vh;
+    border: 4px solid var(--card);
+    border-radius: 4px;
+    box-shadow: 0 12px 48px rgba(0, 0, 0, .5);
+  }
+
+  /* ===== 收件箱 ===== */
+  .mail-list {
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 6px;
+  }
+
+  .mail-item {
+    display: flex;
+    align-items: center;
+    padding: 14px 16px;
+    border: 1px solid var(--line);
+    border-bottom: none;
+    cursor: pointer;
+    transition: background .12s;
+    gap: 14px;
+  }
+
+  .mail-item:first-child { border-radius: 4px 4px 0 0; }
+  .mail-item:last-child { border-bottom: 1px solid var(--line); border-radius: 0 0 4px 4px; }
+  .mail-item:only-child { border-radius: 4px; }
+
+  .mail-item:hover { background: var(--bg-deep); }
+  .mail-item.unread { background: #FFF; }
+  .mail-item.unread .mail-title { font-weight: 700; }
+
+  .mail-star {
+    width: 18px;
+    color: var(--ink-faint);
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  .mail-from {
+    width: 140px;
+    font-size: 13px;
+    color: var(--ink);
+    flex-shrink: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .mail-title {
+    flex: 1;
+    font-size: 13.5px;
+    color: var(--ink);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .mail-date {
+    width: 90px;
+    font-size: 12px;
+    color: var(--ink-faint);
+    flex-shrink: 0;
+    text-align: right;
+  }
+
+  .empty-tip {
+    text-align: center;
+    padding: 60px 0;
+    color: var(--ink-faint);
+    font-size: 13px;
+    letter-spacing: 2px;
+  }
+
+  /* ===== 邮件详情 ===== */
+  .mail-detail .detail-head {
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 22px;
+  }
+
+  .mail-detail .detail-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: 1px;
+    margin-bottom: 14px;
+  }
+
+  .mail-detail .detail-meta {
+    display: flex;
+    gap: 20px;
+    font-size: 12px;
+    color: var(--ink-dim);
+    letter-spacing: .5px;
+  }
+
+  .mail-detail .detail-body {
+    font-size: 14px;
+    line-height: 2;
+    color: var(--ink);
+    letter-spacing: .5px;
+  }
+
+  .mail-detail .detail-body .sender-unknown {
+    color: var(--red);
+    font-style: italic;
+  }
+
+  /* ===== 故障风邮件详情 ===== */
+  .mail-detail.glitch-detail {
+    position: relative;
+  }
+
+  .mail-detail.glitch-detail .detail-title {
+    text-shadow: 2px 0 rgba(255, 0, 60, .55), -2px 0 rgba(0, 220, 255, .55);
+  }
+
+  .glitch-art {
+    display: block;
+    width: max-content;
+    max-width: 100%;
+    font-family: Consolas, "Courier New", monospace;
+    font-size: 10px;
+    line-height: 1.08;
+    letter-spacing: 0;
+    white-space: pre !important;
+    word-break: normal !important;
+    overflow-wrap: normal !important;
+    overflow-x: auto;
+    color: #3a3630;
+    margin: 0;
+  }
+
+  /* 反色模式下字符画显示为红色（设青色，经页面反色后变红） */
+  .mail-detail.glitch-detail .glitch-art {
+    color: #33ffff !important;
+  }
+
+  @keyframes glitch-jitter {
+    0%, 86%   { transform: none; }
+    87%       { transform: translate(-2px, 1px) skewX(-2deg); }
+    89%       { transform: translate(2px, -1px); }
+    91%       { transform: translate(-1px, 0) skewX(1.5deg); }
+    93%       { transform: translate(1px, 1px); }
+    95%       { transform: translate(-2px, -1px) skewX(-1deg); }
+    97%, 100% { transform: none; }
+  }
+
+  .back-btn {
+    display: inline-block;
+    font-size: 12px;
+    color: var(--ink-dim);
+    text-decoration: none;
+    letter-spacing: 1px;
+    margin-bottom: 16px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    font-family: inherit;
+  }
+
+  .back-btn:hover { color: var(--accent); }
+
+  /* ===== 发送成功提示 ===== */
+  .toast {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--ink);
+    color: #FFF;
+    font-size: 16px;
+    letter-spacing: 3px;
+    padding: 20px 48px;
+    border-radius: 8px;
+    box-shadow: 0 8px 32px rgba(0,0,0,.25);
+    z-index: 9999;
+    display: none;
+  }
+
+  .toast.show {
+    display: block;
+    animation: toast-fade 1.6s ease forwards;
+  }
+
+  @keyframes toast-fade {
+    0% { opacity: 0; transform: translate(-50%, -50%) scale(.9); }
+    15% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    80% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    100% { opacity: 0; transform: translate(-50%, -50%) scale(1); }
+  }
+
+  /* ===== 右下角新邮件提示 ===== */
+  .new-mail-notify {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    width: 320px;
+    background: var(--card);
+    border: 1px solid var(--accent);
+    border-radius: 8px;
+    box-shadow: 0 8px 32px rgba(0,0,0,.18);
+    z-index: 9998;
+    display: none;
+    cursor: pointer;
+    overflow: hidden;
+    animation: notify-slide .4s ease forwards;
+  }
+
+  .new-mail-notify.show { display: block; }
+
+  @keyframes notify-slide {
+    from { transform: translateX(380px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+
+  .new-mail-notify .nm-head {
+    background: var(--accent);
+    color: #FFF;
+    font-size: 12px;
+    letter-spacing: 2px;
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .new-mail-notify .nm-close {
+    margin-left: auto;
+    cursor: pointer;
+    font-size: 16px;
+    line-height: 1;
+  }
+
+  .new-mail-notify .nm-body {
+    padding: 14px 16px;
+  }
+
+  .new-mail-notify .nm-from {
+    font-size: 12px;
+    color: var(--ink-faint);
+    margin-bottom: 4px;
+  }
+
+  .new-mail-notify .nm-subject {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: 1px;
+  }
+
+  .new-mail-notify .nm-preview {
+    font-size: 12px;
+    color: var(--ink-dim);
+    margin-top: 6px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand-logo">邮</div>
+  <div>
+    <div class="brand-name">宣银邮箱</div>
+    <div class="brand-sub">XUANYIN · UNIVERSITY · MAIL</div>
+  </div>
+  <div class="user-info">
+    <span>当前账号：<span class="uid" id="uidDisplay"></span></span>
+    <a class="logout" href="index.html">退出登录</a>
+  </div>
+</header>
+
+<main>
+  <nav class="sidebar">
+    <button class="nav-item active" data-tab="compose">✎ 写邮件</button>
+    <button class="nav-item" data-tab="inbox">📥 收件箱<span class="badge" id="unreadBadge" style="display:none">0</span></button>
+    <button class="nav-item" data-tab="drafts">📝 草稿箱</button>
+  </nav>
+
+  <section class="panel" id="panel-compose">
+    <div class="mail-form">
+      <div class="row">
+        <span class="label">收件人</span>
+        <div class="hint-wrap">
+          <input class="input" id="toInput" type="text" placeholder="请输入收件人地址" autocomplete="off">
+          <div class="hint-pop" data-for="toInput" data-fill="19000101@mail.com">点击填入 → 19000101@mail.com</div>
+        </div>
+      </div>
+
+      <div class="row">
+        <span class="label">标题</span>
+        <div class="hint-wrap">
+          <input class="input" id="subInput" type="text" placeholder="请输入邮件标题" autocomplete="off">
+          <div class="hint-pop" data-for="subInput" data-fill="纪念蜡烛">点击填入 → 纪念蜡烛</div>
+        </div>
+      </div>
+
+      <div class="row" style="align-items:flex-start;">
+        <span class="label" style="padding-top:10px;">内容</span>
+        <div class="hint-wrap" style="position:relative;">
+          <textarea class="textarea" id="bodyInput" placeholder="请输入邮件内容..."></textarea>
+          <div class="hint-pop" data-for="bodyInput" data-fill="__IMAGE__">点击插入纪念蜡烛图片</div>
+        </div>
+      </div>
+
+      <div id="attachedImages"></div>
+
+      <div class="actions">
+        <button class="btn btn-primary" id="sendBtn">发 送</button>
+        <button class="btn btn-secondary" id="saveDraftBtn">存草稿</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel hidden" id="panel-inbox">
+    <div id="inboxList"></div>
+  </section>
+
+  <section class="panel hidden" id="panel-drafts">
+    <div id="draftsList"></div>
+  </section>
+</main>
+
+<div class="toast" id="toast">发送成功</div>
+
+<div class="new-mail-notify" id="newMailNotify">
+  <div class="nm-head">
+    <span>✉ 新邮件</span>
+    <span class="nm-close" onclick="closeNotify(event)">×</span>
+  </div>
+  <div class="nm-body">
+    <div class="nm-from" id="nmFrom"></div>
+    <div class="nm-subject" id="nmSubject"></div>
+    <div class="nm-preview" id="nmPreview"></div>
+  </div>
+</div>
+
+<script>
+  // ===== 读取当前账号 =====
+  var params = new URLSearchParams(window.location.search);
+  var CURRENT_USER = params.get('u') || '';
+  var IS_ZHOUSHUI = (CURRENT_USER === '20060921');
+
+  document.getElementById('uidDisplay').textContent = CURRENT_USER || '未登录';
+
+  // ===== Tab 切换 =====
+  var tabs = document.querySelectorAll('.nav-item');
+  var panels = {
+    compose: document.getElementById('panel-compose'),
+    inbox: document.getElementById('panel-inbox'),
+    drafts: document.getElementById('panel-drafts')
+  };
+
+  tabs.forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      document.documentElement.style.filter = '';
+      tabs.forEach(function(b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      var key = btn.dataset.tab;
+      Object.keys(panels).forEach(function(k) {
+        panels[k].classList.toggle('hidden', k !== key);
+      });
+      if (key === 'inbox') {
+        // 从详情页切回时 #inboxList 可能已被详情 HTML 替换，先重建容器再渲染
+        panels.inbox.innerHTML = '<div id="inboxList"></div>';
+        renderInbox();
+      }
+      if (key === 'drafts') {
+        renderDrafts();
+      }
+    });
+  });
+
+  // ===== 提示气泡逻辑（仅周水账号显示） =====
+  var hintPops = document.querySelectorAll('.hint-pop');
+  var relatedInputs = {};
+  hintPops.forEach(function(pop) {
+    var fid = pop.dataset.for;
+    relatedInputs[fid] = pop;
+  });
+
+  if (IS_ZHOUSHUI) {
+    Object.keys(relatedInputs).forEach(function(inputId) {
+      var input = document.getElementById(inputId);
+      var pop = relatedInputs[inputId];
+      input.addEventListener('focus', function() {
+        pop.classList.add('show');
+      });
+      input.addEventListener('blur', function() {
+        setTimeout(function() { pop.classList.remove('show'); }, 180);
+      });
+    });
+
+    // 点击提示词 → 填充
+    hintPops.forEach(function(pop) {
+      pop.addEventListener('mousedown', function(e) {
+        e.preventDefault();
+        var fid = pop.dataset.for;
+        var fill = pop.dataset.fill;
+        var input = document.getElementById(fid);
+        if (fill === '__IMAGE__') {
+          // 内容区：填入蜡烛图 HTML
+          var imgHtml = '<img class="content-img" src="images/candle.png" alt="纪念蜡烛">';
+          var existing = document.getElementById('attachedImages');
+          if (!existing.querySelector('img')) existing.innerHTML = imgHtml;
+          input.value = input.value + '（已附带纪念蜡烛图片）';
+        } else {
+          input.value = fill;
+        }
+        pop.classList.remove('show');
+        input.focus();
+      });
+    });
+  } else {
+    // 非周水账号：隐藏所有提示气泡
+    hintPops.forEach(function(pop) { pop.style.display = 'none'; });
+  }
+
+  // ===== 收件箱（localStorage 持久化，v2：弃用旧测试数据） =====
+  var INBOX_KEY = 'yx_inbox_v2_' + CURRENT_USER;
+
+  // ===== 草稿箱（19320626 账号预设两封草稿） =====
+  var DRAFTS = [];
+  if (CURRENT_USER === '19320626') {
+    DRAFTS = [
+      {
+        to: '19320626@mail.com',
+        subject: '无标题',
+        body: '<pre style="font-family: monospace; white-space: pre; color: #3a3630; line-height: 1.6; margin: 0;">我好像不属于这里\n\n溃烂的外膜\n束缚我\n无时无刻\n\n我害怕他们\n就像他们害怕我一样\n\n孑然一身\n我又能做什么\n就像是被无意落下的沙\n\n他离开了\n我又该去往何处\n我又是什么\n\n我有超凡的能力\n可又与凡人有何相异\n\n他们奉我为神仙\n可不知\n我不叫"仙女"\n我叫██████████</pre>'
+      },
+      {
+        to: '19000101@mail.com',
+        subject: '别忘了来看',
+        body: '<img src="images/draft_pic3.png" alt="附件图片" style="max-width: 100%; border: 1px solid var(--border); border-radius: 6px;">'
+      }
+    ];
+  }
+
+  function renderDrafts() {
+    var container = document.getElementById('draftsList');
+    if (!container) return;
+    if (DRAFTS.length === 0) {
+      container.innerHTML = '<div class="empty-tip">草稿箱暂无内容</div>';
+      return;
+    }
+    container.innerHTML = DRAFTS.map(function(d, i) {
+      return '<div class="mail-item" onclick="showDraftDetail(' + i + ')">' +
+        '<div class="mail-from">' + escapeHtml(d.to) + '</div>' +
+        '<div class="mail-subject">' + escapeHtml(d.subject) + ' <span class="badge-draft">草稿</span></div>' +
+        '</div>';
+    }).join('');
+  }
+
+  function showDraftDetail(idx) {
+    var d = DRAFTS[idx];
+    var container = document.getElementById('draftsList');
+    container.innerHTML =
+      '<button class="btn btn-secondary" onclick="goDraftsList()">← 返回草稿箱</button>' +
+      '<div class="mail-detail">' +
+        '<div class="detail-row"><span class="detail-label">收件人：</span>' + escapeHtml(d.to) + '</div>' +
+        '<div class="detail-row"><span class="detail-label">主题：</span>' + escapeHtml(d.subject) + '</div>' +
+        '<div class="detail-body">' + d.body + '</div>' +
+      '</div>';
+  }
+
+  function goDraftsList() {
+    renderDrafts();
+  }
+
+  function escapeHtml(str) {
+    var div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  function getInbox() {
+    try { return JSON.parse(localStorage.getItem(INBOX_KEY)) || []; }
+    catch(e) { return []; }
+  }
+
+  function setInbox(list) {
+    localStorage.setItem(INBOX_KEY, JSON.stringify(list));
+  }
+
+  function renderInbox() {
+    var list = getInbox();
+    var box = document.getElementById('inboxList');
+    if (list.length === 0) {
+      box.innerHTML = '<div class="empty-tip">收件箱暂无邮件</div>';
+      return;
+    }
+    box.innerHTML = list.map(function(m, i) {
+      return '<div class="mail-item' + (m.unread ? ' unread' : '') + '" data-idx="' + i + '">' +
+        '<span class="mail-star">☆</span>' +
+        '<span class="mail-from">' + m.from + '</span>' +
+        '<span class="mail-title">' + m.subject + '</span>' +
+      '</div>';
+    }).join('');
+
+    box.querySelectorAll('.mail-item').forEach(function(el) {
+      el.addEventListener('click', function() {
+        showMailDetail(parseInt(el.dataset.idx, 10));
+      });
+    });
+
+    updateUnreadBadge();
+  }
+
+  function updateUnreadBadge() {
+    var count = getInbox().filter(function(m) { return m.unread; }).length;
+    var badge = document.getElementById('unreadBadge');
+    if (count > 0) {
+      badge.textContent = count;
+      badge.style.display = 'inline-block';
+    } else {
+      badge.style.display = 'none';
+    }
+  }
+
+  function showMailDetail(idx) {
+    var list = getInbox();
+    var m = list[idx];
+    if (!m) return;
+    m.unread = false;
+    setInbox(list);
+
+    // 无标题故障邮件 → 整个网页反色滤镜
+    document.documentElement.style.filter = m.glitch ? 'invert(1)' : '';
+
+    panels.inbox.innerHTML =
+      '<button class="back-btn" onclick="goInboxList()">← 返回收件箱</button>' +
+      '<div class="mail-detail' + (m.glitch ? ' glitch-detail' : '') + '">' +
+        '<div class="detail-head">' +
+          '<div class="detail-title">' + m.subject + '</div>' +
+          '<div class="detail-meta">' +
+            '<span>发件人：<span class="sender-unknown">' + m.from + '</span></span>' +
+          '</div>' +
+        '</div>' +
+        '<div class="detail-body">' + m.body + '</div>' +
+      '</div>';
+  }
+
+  function goInboxList() {
+    document.documentElement.style.filter = '';
+    panels.inbox.innerHTML = '<div id="inboxList"></div>';
+    renderInbox();
+  }
+
+  // ===== 发送逻辑 =====
+  document.getElementById('sendBtn').addEventListener('click', function() {
+    var to = document.getElementById('toInput').value.trim();
+    var sub = document.getElementById('subInput').value.trim();
+    var bodyEl = document.getElementById('bodyInput');
+    var body = bodyEl.value.trim();
+    var hasImg = !!document.querySelector('#attachedImages img');
+
+    if (!to && !sub && !body && !hasImg) {
+      alert('请至少填写收件人或内容');
+      return;
+    }
+
+    // 发送给 19000101 的邮件 → 收到回件
+    var newMails = [];
+    if (to === '19000101@mail.com') {
+      // 自动回件：每次发送成功都会收到
+      newMails.push({
+        from: '19000101@mail.com',
+        subject: '感谢您的支持！',
+        unread: true,
+        body: '已成功收到您的纪念蜡烛，仙女与你同在。'
+      });
+
+      // 周水账号 + 标题"纪念蜡烛" → 首次额外触发董荣日记
+      if (IS_ZHOUSHUI && sub === '纪念蜡烛') {
+        var inbox = getInbox();
+        var already = inbox.some(function(m) { return m.subject === '董荣的日记其一'; });
+        if (!already) {
+          newMails.push({
+            from: '未知',
+            subject: '董荣的日记其一',
+            unread: true,
+            body: '壬申年五月廿一　甭提了，柳家那闺女就名儿叫<strong>柳小小</strong>，那面儿老大！跟着后爹上山把手绢给弄丢了，整天哭哭啼啼的，说什么自个儿死掉的老娘就给自己留了这么一件儿，那小泪珠掉得一粒一粒的，村里的男人们都失了神了，发了狂了！！！呵！我才不去搁人屁股后面找呢！太臭！'
+          });
+        }
+      }
+    }
+
+    if (newMails.length > 0) {
+      var inbox2 = getInbox();
+      // 依次置顶：日记最终排在回件上面
+      newMails.forEach(function(m) { inbox2.unshift(m); });
+      setInbox(inbox2);
+    }
+
+    // 清空写邮件区
+    document.getElementById('toInput').value = '';
+    document.getElementById('subInput').value = '';
+    bodyEl.value = '';
+    document.getElementById('attachedImages').innerHTML = '';
+
+  // 弹发送成功提示
+    var toast = document.getElementById('toast');
+    toast.classList.remove('show');
+    void toast.offsetWidth;
+    toast.classList.add('show');
+
+    // 收到新邮件 → 延迟弹右下角通知（日记优先展示）
+    if (newMails.length > 0) {
+      var notifyMail = newMails.find(function(m) { return m.subject === '感谢您的支持！'; }) || newMails[0];
+      setTimeout(function() {
+        var notify = document.getElementById('newMailNotify');
+        document.getElementById('nmFrom').textContent = '发件人：' + notifyMail.from;
+        document.getElementById('nmSubject').textContent = notifyMail.subject;
+        document.getElementById('nmPreview').textContent = notifyMail.body.substring(0, 20) + '…';
+        notify.classList.add('show');
+        playNotifySound();
+        updateUnreadBadge();
+      }, 1400);
+    }
+  });
+
+  document.getElementById('saveDraftBtn').addEventListener('click', function() {
+    alert('草稿已保存（示意）');
+  });
+
+  // ===== 收件提示音 =====
+  function playNotifySound() {
+    try { new Audio('images/notify.wav').play(); } catch (e) {}
+  }
+
+  // ===== 通知点击 → 跳收件箱 =====
+  document.getElementById('newMailNotify').addEventListener('click', function(e) {
+    if (e.target.classList.contains('nm-close')) return;
+    this.classList.remove('show');
+    document.querySelector('.nav-item[data-tab="inbox"]').click();
+  });
+
+  function closeNotify(e) {
+    e.stopPropagation();
+    document.getElementById('newMailNotify').classList.remove('show');
+  }
+
+  // ===== 从记忆站跳转过来 → 2 秒后自动收到董荣日记其二 =====
+  var fromJiyi = params.get('from') === 'jiyi';
+  if (fromJiyi && IS_ZHOUSHUI) {
+    setTimeout(function() {
+      var inbox = getInbox();
+      var already = inbox.some(function(m) { return m.subject === '董荣的日记其二'; });
+      if (!already) {
+        var diary2Body = '壬申年五月廿四　昨天夜里睡不着上山帮找找手绢，那些胆小鬼谁敢晚上上山？只有我上过私塾，有新思想的人才知道压根没有什么鬼怪！噫乎！我就知道只有天上的仙女才配得上我！柳家小女倾城倾国？屁！那都是身外之物。我如此风流倜傥，又有思想，心地善良，半夜都在替别人找失物，观音娘娘一定是被我的事迹感动，派了一位有法术的仙女给我！只可惜仙女落入人间，凡夫俗子不可直视其相貌，失去了自己的美丽容颜。请上天放心我一定好好照顾仙女！';
+        inbox.unshift({
+          from: '未知',
+          subject: '董荣的日记其二',
+          unread: true,
+          body: diary2Body
+        });
+        setInbox(inbox);
+
+        // 弹右下角通知
+        var notify = document.getElementById('newMailNotify');
+        document.getElementById('nmFrom').textContent = '发件人：未知';
+        document.getElementById('nmSubject').textContent = '董荣的日记其二';
+        document.getElementById('nmPreview').textContent = '壬申年五月廿四　昨天夜里睡不着上山帮找找手绢…';
+        notify.classList.add('show');
+        playNotifySound();
+        updateUnreadBadge();
+      }
+    }, 2000);
+  }
+
+  // ===== 搜索柳小小后首次进邮箱 → 收到无标题故障邮件 =====
+  if (IS_ZHOUSHUI && localStorage.getItem('yx_lxx_pending') === '1' && localStorage.getItem('yx_lxx_delivered') !== '1') {
+    localStorage.setItem('yx_lxx_delivered', '1');
+    localStorage.removeItem('yx_lxx_pending');
+    var inbox = getInbox();
+    var already = inbox.some(function(m) { return m.subject === '无标题' && m.glitch; });
+    if (!already) {
+      inbox.unshift({
+        from: 'Sähköpostin salasana',
+        subject: '无标题',
+        unread: true,
+        glitch: true,
+        body: '<img src="images/untitled.png" style="max-width:100%;border:1px solid rgba(255,255,255,.2);" alt="">'
+      });
+      setInbox(inbox);
+      setTimeout(function() {
+        var notify = document.getElementById('newMailNotify');
+        document.getElementById('nmFrom').textContent = '发件人：Sähköpostin salasana';
+        document.getElementById('nmSubject').textContent = '无标题';
+        document.getElementById('nmPreview').textContent = '［图片］';
+        notify.classList.add('show');
+        playNotifySound();
+        updateUnreadBadge();
+      }, 1200);
+    }
+  }
+
+  // ===== 初始化 =====
+  renderInbox();
+</script>
+</body>
+</html>
