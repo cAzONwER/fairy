@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1080">
+<title>记忆</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    width: 100%;
+    height: 100%;
+    background: #000;
+    overflow: hidden;
+    cursor: none;
+  }
+
+  /* 场景图 */
+  #scene {
+    position: fixed;
+    inset: 0;
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    z-index: 1;
+    transition: opacity .6s;
+  }
+
+  /* 黑色蒙版（40%透明=60%不透明），跟随鼠标挖洞 */
+  #overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 2;
+    background: radial-gradient(
+      circle 120px at var(--mx, 50%) var(--my, 50%),
+      transparent 0%,
+      transparent 60%,
+      rgba(0,0,0,0.6) 100%
+    );
+    pointer-events: none;
+  }
+
+  /* 隐形点击热区（仅 finalwoodtool 场景显示） */
+  #hotspot {
+    position: fixed;
+    z-index: 3;
+    cursor: pointer;
+    display: none;
+  }
+
+  /* 顶部箭头 ↑ */
+  .nav-arrow {
+    position: fixed;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 50;
+    width: 48px;
+    height: 48px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 28px;
+    font-family: "Courier New", monospace;
+    user-select: none;
+    transition: color .2s, transform .2s;
+    text-shadow: 0 0 6px rgba(255,255,255,0.4);
+  }
+
+  .nav-arrow:hover {
+    color: #fff;
+  }
+
+  .nav-arrow.top { top: 12px; }
+  .nav-arrow.top:hover { transform: translateX(-50%) translateY(-4px); }
+  .nav-arrow.bottom { bottom: 12px; }
+  .nav-arrow.bottom:hover { transform: translateX(-50%) translateY(4px); }
+
+  .nav-arrow.hidden { display: none; }
+
+  /* 自定义光标圆圈 */
+  #cursor-ring {
+    position: fixed;
+    width: 20px;
+    height: 20px;
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 100;
+    transform: translate(-50%, -50%);
+    transition: width .15s, height .15s;
+  }
+
+  /* 提示文字（"还没有找到，我不想下山"） */
+  #nav-toast {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #aaa;
+    font-size: 16px;
+    letter-spacing: 4px;
+    background: rgba(0,0,0,0.8);
+    padding: 14px 36px;
+    border: 1px solid #222;
+    z-index: 200;
+    display: none;
+    font-family: "Microsoft YaHei", sans-serif;
+  }
+
+  #nav-toast.show { display: block; }
+
+  /* 拾起提示 */
+  #pickup-toast {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #ddd;
+    font-size: 18px;
+    letter-spacing: 4px;
+    background: rgba(0,0,0,0.8);
+    padding: 16px 40px;
+    border: 1px solid #333;
+    z-index: 200;
+    display: none;
+    font-family: "Microsoft YaHei", sans-serif;
+  }
+
+  #pickup-toast.show { display: block; }
+
+  /* 跳吓全屏红字 */
+  #scare-full {
+    position: fixed;
+    inset: 0;
+    z-index: 300;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: #000;
+  }
+
+  #scare-full.show { display: flex; }
+
+  #scare-full .scare-text {
+    color: #c00;
+    font-size: 120px;
+    font-family: "SimHei", "黑体", sans-serif;
+    font-weight: 900;
+    letter-spacing: 12px;
+    text-shadow: 0 0 20px rgba(200,0,0,0.5);
+  }
+
+  /* 病毒式弹跳文字 */
+  #virus-stage {
+    position: fixed;
+    inset: 0;
+    z-index: 400;
+    display: none;
+    overflow: hidden;
+    background: #000;
+  }
+
+  .virus-text {
+    position: absolute;
+    color: #c00;
+    font-family: "SimHei", "黑体", sans-serif;
+    font-weight: 900;
+    text-shadow: 0 0 8px rgba(200,0,0,0.4);
+    user-select: none;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+</style>
+</head>
+<body>
+
+<div id="scene"></div>
+<div id="overlay"></div>
+<div id="cursor-ring"></div>
+
+<div id="hotspot"></div>
+
+<!-- 顶部箭头（下一个场景） -->
+<div class="nav-arrow top" id="arrowUp">▲</div>
+<!-- 底部箭头（上一个场景） -->
+<div class="nav-arrow bottom" id="arrowDown">▽</div>
+
+<div id="nav-toast">还没有找到，我不想下山</div>
+<div id="pickup-toast">手绢已拾起</div>
+
+<div id="scare-full">
+  <div class="scare-text">仙女看着你</div>
+</div>
+
+<div id="virus-stage"></div>
+
+<audio id="scare-audio" preload="auto">
+  <source src="images/scare.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+  // ===== 场景配置 =====
+  // 顺序：search1 → sear2 → finalwoodtool(scene.png) → woood
+  var SCENES = [
+    { img: 'images/search1.png', w: 1920, h: 1080, hasHotspot: false },
+    { img: 'images/sear2.png',   w: 1920, h: 1080, hasHotspot: false },
+    { img: 'images/scene.png',   w: 1857, h: 973,  hasHotspot: true,  hs: { x1: 1700, y1: 600, x2: 1805, y2: 690 } },
+    { img: 'images/woood.png',   w: 1920, h: 1080, hasHotspot: false }
+  ];
+
+  var sceneIdx = 0;
+  var sceneEl = document.getElementById('scene');
+  var overlay = document.getElementById('overlay');
+  var ring = document.getElementById('cursor-ring');
+  var hk = document.getElementById('hotspot');
+  var navToast = document.getElementById('nav-toast');
+  var toast = document.getElementById('pickup-toast');
+  var scareFull = document.getElementById('scare-full');
+  var virusStage = document.getElementById('virus-stage');
+  var audio = document.getElementById('scare-audio');
+  var arrowUp = document.getElementById('arrowUp');
+  var arrowDown = document.getElementById('arrowDown');
+  var picked = false;
+
+  // ===== 切换场景 =====
+  function loadScene(idx) {
+    var s = SCENES[idx];
+    sceneEl.style.opacity = '0';
+    setTimeout(function() {
+      sceneEl.style.backgroundImage = 'url("' + s.img + '")';
+      sceneEl.style.opacity = '1';
+
+      // 热区仅在 finalwoodtool 场景显示
+      if (s.hasHotspot) {
+        hk.style.display = 'block';
+        positionHotspot();
+      } else {
+        hk.style.display = 'none';
+      }
+    }, 300);
+  }
+
+  // ===== 热区按背景图坐标精确定位（cover 模式换算） =====
+  function positionHotspot() {
+    var s = SCENES[sceneIdx];
+    if (!s.hasHotspot) return;
+    var vw = window.innerWidth, vh = window.innerHeight;
+    var scale = Math.max(vw / s.w, vh / s.h);
+    var rendW = s.w * scale, rendH = s.h * scale;
+    var offX = (vw - rendW) / 2, offY = (vh - rendH) / 2;
+    hk.style.left = (offX + s.hs.x1 * scale) + 'px';
+    hk.style.top = (offY + s.hs.y1 * scale) + 'px';
+    hk.style.width = ((s.hs.x2 - s.hs.x1) * scale) + 'px';
+    hk.style.height = ((s.hs.y2 - s.hs.y1) * scale) + 'px';
+  }
+
+  window.addEventListener('resize', positionHotspot);
+
+  // ===== 手电筒跟随鼠标 =====
+  document.addEventListener('mousemove', function(e) {
+    overlay.style.setProperty('--mx', e.clientX + 'px');
+    overlay.style.setProperty('--my', e.clientY + 'px');
+    ring.style.left = e.clientX + 'px';
+    ring.style.top = e.clientY + 'px';
+  });
+
+  // ===== 提示弹窗 =====
+  function showNavToast() {
+    navToast.classList.add('show');
+    setTimeout(function() { navToast.classList.remove('show'); }, 2000);
+  }
+
+  // ===== 箭头点击 =====
+  // 顶部 ▲：切换下一个场景；woood（最后一个）时 → 提示"还没有找到，我不想下山"
+  // 底部 ▽：切换上一个场景；search1（第一个）时 → 提示"还没有找到，我不想下山"
+  // 不循环
+  arrowUp.addEventListener('click', function() {
+    if (sceneIdx === SCENES.length - 1) {          // woood（最后一个）按 ▲ → 提示
+      showNavToast();
+      return;
+    }
+    sceneIdx++;
+    loadScene(sceneIdx);
+  });
+
+  arrowDown.addEventListener('click', function() {
+    if (sceneIdx === 0) {                          // 第一个场景，底部箭头触发提示
+      showNavToast();
+      return;
+    }
+    sceneIdx--;
+    loadScene(sceneIdx);
+  });
+
+  // ===== 点击手绢 → 拾起 =====
+  hk.addEventListener('click', function() {
+    if (picked) return;
+    picked = true;
+
+    hk.style.display = 'none';
+    ring.style.display = 'none';
+    document.body.style.cursor = 'default';
+    arrowUp.classList.add('hidden');
+    arrowDown.classList.add('hidden');
+
+    toast.classList.add('show');
+
+    setTimeout(function() {
+      toast.classList.remove('show');
+      scareFull.classList.add('show');
+      try { audio.currentTime = 0; audio.play(); } catch(e) {}
+
+      setTimeout(function() {
+        scareFull.classList.remove('show');
+        virusStage.style.display = 'block';
+        startVirus();
+      }, 800);
+    }, 1200);
+  });
+
+  // ===== 病毒式弹跳 =====
+  var virusInterval = null;
+  var virusCount = 0;
+
+  function spawnVirus() {
+    var el = document.createElement('div');
+    el.className = 'virus-text';
+    el.textContent = '仙女看着你';
+    var size = 30 + Math.random() * 80;
+    el.style.fontSize = size + 'px';
+    el.style.left = Math.random() * 80 + '%';
+    el.style.top = Math.random() * 80 + '%';
+    el.style.transform = 'rotate(' + (Math.random() * 60 - 30) + 'deg)';
+    el.style.opacity = 0.6 + Math.random() * 0.4;
+    virusStage.appendChild(el);
+    virusCount++;
+    if (virusCount > 60) virusStage.innerHTML = '';
+  }
+
+  function startVirus() {
+    var delay = 200;
+    function loop() {
+      spawnVirus();
+      spawnVirus();
+      delay = Math.max(30, delay * 0.85);
+      virusInterval = setTimeout(loop, delay);
+    }
+    loop();
+    setTimeout(function() {
+      clearTimeout(virusInterval);
+      window.location.href = '../youxiang/mail.html?u=20060921&from=jiyi';
+    }, 3000);
+  }
+
+  // ===== 初始化 =====
+  loadScene(0);
+</script>
+
+</body>
+</html>
