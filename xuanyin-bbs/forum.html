@@ -942,6 +942,109 @@
       </article>
     </div>
   </div>
+
+  <!-- ============ 搜索结果：仙女村 ============ -->
+  <div class="tab-panel" id="panel-search">
+    <div class="sub-head">
+      <span class="sub-back" id="searchBack">‹ 返回发现</span>
+      <span class="sub-title">搜索结果 · 仙女村</span>
+    </div>
+
+    <!-- 帖子一：避雷 -->
+    <article class="post">
+      <div class="post-head">
+        <div class="avatar" style="background:#b08080">避</div>
+        <div>
+          <div class="post-user">避雷专业户</div>
+          <div class="post-meta">10-05 16:20 · 灌水区</div>
+        </div>
+      </div>
+      <div class="post-body">无聊的村子，无聊的风景，无聊的表演，纯碰瓷民俗传说！避雷避雷避雷！</div>
+      <div class="post-actions">
+        <span class="act act-like" data-count="56"><span class="ico">♡</span><span class="num">56</span></span>
+        <span class="act act-comment"><span class="ico">✎</span><span class="num">2</span></span>
+        <span class="act act-repost" data-count="11"><span class="ico">⇄</span><span class="num">11</span></span>
+      </div>
+      <div class="comments">
+        <div class="comment">
+          <div class="avatar" style="background:#a8c8b8">余</div>
+          <div class="comment-main">
+            <div class="comment-user">年年有余</div>
+            <div class="comment-text">年年避雷年年去</div>
+            <div class="comment-meta">10-05 16:44</div>
+          </div>
+        </div>
+        <div class="comment">
+          <div class="avatar" style="background:#8fa8c8">清</div>
+          <div class="comment-main">
+            <div class="comment-user">清醒大学生</div>
+            <div class="comment-text">就个破村子怎么老有人去？</div>
+            <div class="comment-meta">10-05 17:02</div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- 帖子二：门票/魔术 -->
+    <article class="post">
+      <div class="post-head">
+        <div class="avatar" style="background:#c89b6d">坑</div>
+        <div>
+          <div class="post-user">踩坑冠军</div>
+          <div class="post-meta">10-06 09:15 · 灌水区</div>
+        </div>
+      </div>
+      <div class="post-body">妈呀大家说的仙女村避雷是真得避啊，看表演的门票必须官网上买，没有线下购票渠道，荒郊野岭的根本没信号！表演就是普通的魔术表演，一秒猜出原理。</div>
+      <div class="post-actions">
+        <span class="act act-like" data-count="40"><span class="ico">♡</span><span class="num">40</span></span>
+        <span class="act act-comment"><span class="ico">✎</span><span class="num">0</span></span>
+        <span class="act act-repost" data-count="7"><span class="ico">⇄</span><span class="num">7</span></span>
+      </div>
+    </article>
+
+    <!-- 帖子三：盖脸仙女 -->
+    <article class="post">
+      <div class="post-head">
+        <div class="avatar" style="background:#9fb0a0">奇</div>
+        <div>
+          <div class="post-user">好奇害死猫</div>
+          <div class="post-meta">10-07 21:08 · 灌水区</div>
+        </div>
+      </div>
+      <div class="post-body">仙女村的仙女盖着脸一动不动的是真人吗？</div>
+      <div class="post-actions">
+        <span class="act act-like" data-count="88"><span class="ico">♡</span><span class="num">88</span></span>
+        <span class="act act-comment"><span class="ico">✎</span><span class="num">3</span></span>
+        <span class="act act-repost" data-count="19"><span class="ico">⇄</span><span class="num">19</span></span>
+      </div>
+      <div class="comments">
+        <div class="comment">
+          <div class="avatar" style="background:#8fa8c8">福</div>
+          <div class="comment-main">
+            <div class="comment-user">福尔摩斯本斯</div>
+            <div class="comment-text">假的，没看手脚一个没露吗？</div>
+            <div class="comment-meta">10-07 21:30</div>
+          </div>
+        </div>
+        <div class="comment">
+          <div class="avatar" style="background:#c8b8d8">微</div>
+          <div class="comment-main">
+            <div class="comment-user">显微镜成精</div>
+            <div class="comment-text">这看不出来的也是神了</div>
+            <div class="comment-meta">10-07 21:47</div>
+          </div>
+        </div>
+        <div class="comment">
+          <div class="avatar" style="background:#d8c8a8">阳</div>
+          <div class="comment-main">
+            <div class="comment-user">阳气不足</div>
+            <div class="comment-text">仙女村还是挺阴的大家别去</div>
+            <div class="comment-meta">10-07 22:10</div>
+          </div>
+        </div>
+      </div>
+    </article>
+  </div>
 </main>
 
 <!-- 图片放大浮层 -->
@@ -1027,8 +1130,25 @@
     e.preventDefault();
     const q = searchInput.value.trim();
     if (!q) return;
+    if (q.indexOf('仙女村') !== -1) {
+      // 显示「仙女村」搜索结果面板
+      tabs.forEach(t => t.classList.remove('active'));
+      panels.forEach(p => p.classList.remove('active'));
+      document.getElementById('panel-search').classList.add('active');
+      window.scrollTo(0, 0);
+      searchInput.value = '';
+      return;
+    }
     alert('未找到与「' + q + '」相关的内容');
     searchInput.value = '';
+  });
+
+  // 搜索结果 · 返回发现页
+  document.getElementById('searchBack').addEventListener('click', () => {
+    document.getElementById('panel-search').classList.remove('active');
+    document.querySelector('.tab[data-tab="discover"]').classList.add('active');
+    document.getElementById('panel-discover').classList.add('active');
+    window.scrollTo(0, 0);
   });
 
   // ===== 我的 =====
