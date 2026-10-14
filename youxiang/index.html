@@ -289,6 +289,12 @@
     if (e.key === 'Enter') doLogin();
   });
 
+  // 账号填 19320626 时，密码框提示「左袖口」
+  document.getElementById('mailUser').addEventListener('input', function() {
+    var isSpecial = stripDomain(this.value) === '19320626';
+    document.getElementById('mailPass').placeholder = isSpecial ? '左袖口' : '请输入密码';
+  });
+
   function doLogin() {
     var u = stripDomain(document.getElementById('mailUser').value);
     var p = document.getElementById('mailPass').value;
