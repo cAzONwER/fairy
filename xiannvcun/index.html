@@ -613,6 +613,12 @@
     color: #c0392b;
     margin-top: 8px;
   }
+  .admin-box .admin-hint {
+    font-size: 12px;
+    color: var(--ink-faint, #8D6E63);
+    margin-top: 8px;
+    letter-spacing: 1px;
+  }
   .admin-box .admin-error.show { display: block; }
   .admin-box .admin-logout {
     margin-top: 14px;
@@ -883,6 +889,7 @@
       <h3>管理员登录</h3>
       <input type="text" id="adminUser" placeholder="账号" autocomplete="off">
       <input type="password" id="adminPass" placeholder="密码" autocomplete="off">
+      <div class="admin-hint">见之而不知的意思是灯下黑</div>
       <div class="admin-error" id="adminError">账号或密码不正确</div>
       <button class="admin-btn" onclick="submitAdminLogin()">登 录</button>
     </div>
