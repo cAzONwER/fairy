@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>攻略.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> or <div class="page"></div> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+          ? 'dark'
+          : 'default'
+    });
+  </script>
+<h1 id="仙女下凡攻略"><center>仙女下凡攻略</center></h1>
+<p> </p>
+<h2 id="周水主线">周水主线：</h2>
+<p>网址:https://cazonwer.github.io/fairy/xuanyin-bbs/</p>
+<p>1.点击账号和密码的输入框，根据提示直接填写即可进入论坛。
+<img src="pic/aa.png" alt="论坛登录界面"></p>
+<p>2.浏览帖子内容与评论，景点名称疑似“仙女村”，继续浏览。
+<img src="pic/1 .png" alt="萌香小金鱼帖子"></p>
+<p>3.浏览帖子内容与评论，提取信息：邮箱帐号为出生日期，密码疑似乱码未知。
+<img src="pic/2.png" alt="邮箱账密求助帖"></p>
+<p>4.由置顶公告得到信息：仅形式为https://cazonwer.github.io/fairy/******/ 的网址可用
+<img src="pic/3.png" alt="论坛置顶公告"></p>
+<p>5.在“我的”模块中查看“我的帖子”，观察帖子的发布日期结合文案，得到线索：“我”的生日为2006年9月21日
+<img src="pic/7 (2).png" alt="我的帖子"></p>
+<p><img src="" alt=""></p>
+<p>6.搜索框检索“仙女村”，提取信息:表演门票需要在景点官网购买，根据生活经验以及置顶公告的提示可知景点官网地址为https://cazonwer.github.io/fairy/xiannvcun/
+<img src="pic/4.png" alt="&quot;仙女村&quot;搜索结果"></p>
+<p>7.修改网址后缀并跳转，进入“仙女村”官网首页
+<img src="pic/5.png" alt="“仙女村”官网首页"></p>
+<p>8.鼠标靠近页面左侧触发隐藏导航栏，点击查看“近期新闻”
+<img src="pic/6 (2).png" alt="左侧导航栏"></p>
+<p>9.查看“仙女首次表演”新闻详情，获得关键信息“董荣”
+<img src="pic/6 (3).png" alt="新闻详情"></p>
+<p>10.搜索栏检索“董荣”
+<img src="pic/6 (4).png" alt="“董荣”结果"></p>
+<p>11.点进“董荣”详情页，浏览内容，获得邮箱地址，下载纪念蜡烛图片
+<img src="pic/6 (5).png" alt="“董荣”"></p>
+<p>12.由生活经验与置顶公告可得邮箱地址为：https://cazonwer.github.io/fairy/youxiang/ ，输入网址并跳转
+<img src="pic/6 (6).png" alt="邮箱登录界面"></p>
+<p>13.由步骤1、3、5得到邮箱账户为20060921，密码为zhoushui1108，登录成功进入邮箱，点击各个输入框，弹出提示，依次点击文本填充预设内容（注意：非预设内容发送邮件不会有任何线索！）
+<img src="pic/6 (7).png" alt="填充预设内容">
+正确完整邮件如下：
+<img src="pic/8.png" alt="邮箱初始界面"></p>
+<p>14.点击发送后，耐心等待2秒，收到回信
+<img src="pic/6 (8).png" alt="蜡烛回信"></p>
+<p>15.点击董荣日记其一，进入详情页，获得线索：柳小小
+<img src="pic/6 (9).png" alt="董荣日记其一"></p>
+<p>16.转到仙女村网页:https://cazonwer.github.io/fairy/xiannvcun/ 搜索框检索“柳小小”，新邮件提示音响起，右下角弹出提示框
+<img src="pic/6 (10).png" alt="搜索柳小小"></p>
+<p>17.跳转邮箱界面https://cazonwer.github.io/fairy/youxiang/ 登录周水邮箱，查看新邮件。通过网络得到收件人Sähköpostin salasana的翻译为“电子邮箱密码”
+<img src="pic/11 (5).png" alt="Sähköpostin salasana"></p>
+<p>18.查看“柳小小”详情页，根据字条内容“目察百步，不能了了，而欲以所见为有，所不见为无，则天下之所无者，亦必多矣。”意为“看不到的不代表不存在”，提示页面中有隐藏内容。选中页面上的所有字，得到新网址：https://cazonwer.github.io/fairy/jiyi/
+<img src="pic/6 (11).png" alt="透明字体"></p>
+<p>19.跳转至https://cazonwer.github.io/fairy/jiyi/ ，需要密码，密码提示为“看着他的脸”。
+<img src="pic/6 (12).png" alt="记忆首页"></p>
+<p>20.男人人像图片仅有“董荣”介绍中的“董荣肖像”，转至仙女村网页搜索“董荣”，进入详情页，观察肖像中的黑块，得到摩斯密码：</p>
+<center>“.-- &emsp; - &emsp; -..- &emsp; - &emsp; .-.”</center>
+&nbsp;
+<p>通过网络得到翻译结果为：m t x t r
+<img src="pic/6 (5).png" alt="moss"></p>
+<p>21.转到https://cazonwer.github.io/fairy/jiyi/ ，输入密码：mtxtr
+看到闪过字幕：“壬申年五月廿三丑时”——“董荣”——“山上”——“寻找手绢”
+进入寻找手绢环节，首次进入请耐心等待图片加载，移动鼠标寻找手绢，点击实心正三角为向前一个场景，点击空心倒三角为向后一个场景。
+<img src="pic/10.png" alt="找手绢"></p>
+<p>22.{恐怖图片提醒}向前第三个场景右下角边缘，点击手绢，与“仙女”相遇（如有需要请调高亮度）
+<img src="pic/6 (14).png" alt="手绢"></p>
+<p>23.“仙女正在看着你”过场动画后回到邮箱界面，耐心等待2秒，收到新邮件“董荣日记其二”
+<img src="pic/11 (3).png" alt="董荣日记其二">
+点击查看详情，根据日记日期“壬申年五月廿四”和内容“昨夜”，得到仙女降临时间为：壬申年五月廿三；通过网络得到壬申年可能为1872、1932、1992……，结合步骤11“董荣”详情页中董荣的出生年份1900，得到此处壬申年指1932年，查看日历，1932年农历五月廿三对应的公历日期为6月26日，综上得到仙女的降临日期为公历1932年6月26日
+<img src="pic/11 (4).png" alt="董荣日记其二">
+24.结合步骤17中收到的&quot;电子邮箱密码&quot;以及降临日期“1932年6月26日”，可以猜测“仙女”邮箱账号为“19320626”，输入账号，得到密码框内提示“左袖口”
+<img src="pic/11 (6).png" alt="仙女邮箱密码提示">
+回到周水邮箱查看Sähköpostin salasana的邮件图片，在图片人物的左袖口附近找到文本“密码是5399”。
+<img src="pic/11 (51).png" alt="仙女邮箱密码">
+25.输入仙女邮箱账号“19320626”，密码“5399”，进入仙女邮箱。浏览草稿箱的草稿邮件。
+ </p>
+<p>根据无标题草稿邮件中的内容得知“仙女”并不属于地球与其内心复杂的情感。
+<img src="pic/11 (1).png" alt="仙女自述"></p>
+<p>根据“别忘了来看”邮件得到支付凭证码“AET806ZK”
+<img src="pic/12 (2).png" alt="支付凭证码"></p>
+<p>26.跳转至仙女村网页https://cazonwer.github.io/fairy/xiannvcun/ 在“仙女表演”板块，点击“购买”按钮，输入支付凭证码“AET806ZK”
+<img src="pic/12 (3).png" alt="凭证码输入">
+27.点击门票
+<img src="pic/12 (4).png" alt="门票">
+28.看到“感谢游玩”，意为主线游戏结束。
+<img src="pic/12 (1).png" alt="感谢游玩">
+ </p>
+<p> </p>
+<p> </p>
+<h2 id="管理员支线">管理员支线：</h2>
+<p>1.跳转至仙女村网页https://cazonwer.github.io/fairy/xiannvcun/ ，点击页面左上角小人图标，弹出管理员登录界面，小字提示&quot;见之而不知的意思是灯下黑&quot;，“见之而不知”猜测管理员登录账号为“guanliyuan”，
+<img src="pic/13.png" alt="见之而不知">
+由“灯下黑”，找到下载的纪念蜡烛图片，调高亮度，曝光，调低对比度，得到密码“89771”
+<img src="pic/14.png" alt="灯下黑">
+2.输入账号密码即可进入管理员登录状态，鼠标靠近页面左侧，弹出隐藏导航栏，看到“仙女档案”，需要密码。</p>
+<p> 搜索框搜索“仙女”得到结果“防忘”。
+<img src="pic/15 (4).png" alt="防忘结果">
+进入详情页得到一串数字“89771”。猜测密码为“89771”。
+<img src="pic/15 (5).png" alt="防忘详情">
+两处验证密码均为“89771”
+<img src="pic/15 (6).png" alt="验证1">
+<img src="pic/15 (7).png" alt="验证2">
+3.进入仙女档案，得知非地生命“仙女”正在被未知组织监视。（支线剧情结束）
+<img src="pic/15 (1).png" alt="仙女档案"></p>
+<p> </p>
+<h1 id="感谢游玩期待您的反馈"><center>感谢游玩！期待您的反馈！</center></h1>
+
+</body>
+</html>
