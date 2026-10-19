@@ -223,6 +223,27 @@
 
   .person-text p:last-child { margin-bottom: 0; }
 
+  /* 显眼线索框：框可见，文字透明（选中后显形） */
+  .clue-box {
+    margin-top: 28px;
+    padding: 26px 20px;
+    border: 2px dashed var(--accent);
+    border-radius: 6px;
+    background: rgba(165, 67, 47, .04);
+    text-align: center;
+  }
+  .clue-box-text {
+    font-size: 17px;
+    letter-spacing: 4px;
+    color: transparent;
+    user-select: text;
+    cursor: text;
+  }
+  .clue-box-text::selection {
+    color: #fff;
+    background: #a5432f;
+  }
+
   .person-text strong {
     color: var(--accent);
     font-weight: 700;
@@ -331,6 +352,7 @@
         <p>她偶然拾得《抱朴子・论仙》一书，熟读至能够倒背如流，平日常引书中古文谈吐，借以自持。</p>
         <p>柳小小幼年丧父，后跟随母亲改嫁，母亲于改嫁后不久因病去世。</p>
         <p>柳小小于 1934 年失踪，失踪时仅留下一张字条，上书：<strong>"目察百步，不能了了，而欲以所见为有，所不见为无，则天下之所无者，亦必多矣。"</strong></p>
+        <div class="clue-box"><span class="clue-box-text">就在这里</span></div>
       </div>
 
       <div class="person-figures">
